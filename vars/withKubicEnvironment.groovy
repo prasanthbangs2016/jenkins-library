@@ -13,6 +13,9 @@
 // limitations under the License.
 def call(Map parameters = [:], Closure body) {
     def nodeLabel = parameters.get('nodeLabel', 'devel')
+    def gitBase = parameters.get('gitBase')
+    def gitBranch = parameters.get('gitBranch')
+    def gitCredentialsId = parameters.get('gitCredentialsId')
 
     echo "Creating Kubic Environment"
 
@@ -26,7 +29,7 @@ def call(Map parameters = [:], Closure body) {
 
         // Fetch the necessary code
         stage('Retrieve Code') {
-            echo "TODO"
+            cloneAllKubicRepos(gitBase: gitBase, branch: gitBranch, credentialsId: gitCredentialsId)
         }
 
         // Create the Kubic environment

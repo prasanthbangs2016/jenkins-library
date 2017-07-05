@@ -17,7 +17,12 @@ def call(Map parameters = [:]) {
     // TODO: We may want to do different things here, based on if we're
     //       testing a PR, a branch, or a nightly?
 
-    withKubicEnvironment(nodeLabel: 'leap42.2&&m1.xlarge') {
+    withKubicEnvironment(
+            nodeLabel: 'leap42.2&&m1.xlarge',
+            gitBase: 'https://github.com/kubic-project',
+            gitBranch: env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME),
+            gitCredentialsId: 'github-token') {
+
         stage('Run Tests') {
             echo "TODO"
         }
