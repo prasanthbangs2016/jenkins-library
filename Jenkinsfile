@@ -1,3 +1,9 @@
-library "kubic-jenkins-library@$BRANCH_NAME"
+// This Jenkinsfile is a little different to the rest, due to
+// wanting to self-test changes to the library.
+def targetBranch = env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME)
+def pullNumber = env.getEnvironment().get('CHANGE_ID', null)
+def libraryVersion = (pullNumber == null) ? targetBranch : "origin/pr/$CHANGE_ID"
+
+library "kubic-jenkins-library@${libraryVersion}"
 
 coreKubicProjectCi()
