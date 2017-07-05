@@ -13,4 +13,13 @@
 // limitations under the License.
 def call(Map parameters = [:]) {
     echo "Starting Kubic core project CI"
+    
+    // TODO: We may want to do different things here, based on if we're
+    //       testing a PR, a branch, or a nightly?
+
+    withKubicEnvironment(nodeLabel: 'leap42.2&&m1.xlarge') {
+        stage('Run Tests') {
+            echo "TODO"
+        }
+    }
 }
