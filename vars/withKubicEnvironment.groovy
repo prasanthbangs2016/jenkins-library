@@ -32,41 +32,56 @@ def call(Map parameters = [:], Closure body) {
             cloneAllKubicRepos(gitBase: gitBase, branch: gitBranch, credentialsId: gitCredentialsId)
         }
 
-        // Create the Kubic environment
-        stage('Create Environment') {
-            echo "TODO"
-        }
+        try {
+            // Create the Kubic environment
+            stage('Create Environment') {
+                echo "TODO"
+            }
 
-        // Bootstrap the Kubic environment
-        stage('Bootstrap Environment') {
-            echo "TODO"
-        }
+            // Bootstrap the Kubic environment
+            stage('Bootstrap Environment') {
+                echo "TODO"
+            }
 
-        // Prepare the closure delegate
-        def delegate = [:]
-        // Set some context variables available inside the body() method
-        //delegate['environment'] = environment
-        body.resolveStrategy = Closure.DELEGATE_FIRST
-        body.delegate = delegate
+            // Prepare the body closure delegate
+            def delegate = [:]
+            // Set some context variables available inside the body() method
+            //delegate['environment'] = environment
+            body.resolveStrategy = Closure.DELEGATE_FIRST
+            body.delegate = delegate
 
-        // Execute the body of the test
-        body()
+            // Execute the body of the test
+            body()
+        } finally {
+            // Gather logs from the environment
+            stage('Gather Logs') {
+                try {
+                    sh(script: "touch logs/dummy.log")
+                } catch (Exception exc) {
+                    echo "Failed to Gather Logs"
+                    // TODO: Figure out if we can mark this stage as failed, while allowing the remaining stages to proceed.
+                }
+            }
 
-        // Gather logs from the environment
-        stage('Gather Logs') {
-            echo "TODO"
-            sh(script: "touch logs/dummy.log")
-        }
+            // Destroy the Kubic Environment
+            stage('Destroy Environment') {
+                try {
+                    echo "TODO"
+                } catch (Exception exc) {
+                    echo "Failed to Destroy Environment"
+                    // TODO: Figure out if we can mark this stage as failed, while allowing the remaining stages to proceed.
+                }
+            }
 
-        // Destroy the Kubic Environment
-        stage('Destroy Environment') {
-            echo "TODO"
-        }
-
-        // Archive the logs
-        stage('Archive Logs') {
-            archiveArtifacts(artifacts: 'logs/*', fingerprint: true)
+            // Archive the logs
+            stage('Archive Logs') {
+                try {
+                    archiveArtifacts(artifacts: 'logs/*', fingerprint: true)
+                } catch (Exception exc) {
+                    echo "Failed to Archive Logs"
+                    // TODO: Figure out if we can mark this stage as failed, while allowing the remaining stages to proceed.
+                }
+            }
         }
     }
-
 }
