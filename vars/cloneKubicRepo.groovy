@@ -21,10 +21,10 @@ def call(Map parameters = [:]) {
     echo "Cloning Kubic Repo: ${repo}"
 
     timeout(5) {
-        if (env.JOB_NAME.contains(repo)) {
-            checkout scm 
-        } else {
-            dir(repo) {
+        dir(repo) {
+            if (env.JOB_NAME.contains(repo)) {
+                checkout scm
+            } else {
                 checkout([
                     $class: 'GitSCM',
                     branches: [[name: "*/${branch}"]],
