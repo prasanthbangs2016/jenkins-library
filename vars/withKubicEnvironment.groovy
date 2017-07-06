@@ -21,6 +21,14 @@ def call(Map parameters = [:], Closure body) {
 
     // Allocate a node
     node (nodeLabel) {
+        // Show some info about the node were running on
+        stage('Node Info') {
+            echo "Node: ${env.NODE_NAME}"
+            sh(script: 'ip a')
+            def response = httpRequest(url: 'http://169.254.169.254/latest/meta-data/public-ipv4')
+            echo "Public IPv4: " + response.content
+        }
+
         // Basic prep steps
         stage('Preparation') {
             step([$class: 'WsCleanup'])
