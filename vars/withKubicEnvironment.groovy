@@ -11,6 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+import com.suse.kubic.Environment
+
 def call(Map parameters = [:], Closure body) {
     def nodeLabel = parameters.get('nodeLabel', 'devel')
     def gitBase = parameters.get('gitBase')
@@ -40,10 +42,12 @@ def call(Map parameters = [:], Closure body) {
             cloneAllKubicRepos(gitBase: gitBase, branch: gitBranch, credentialsId: gitCredentialsId)
         }
 
+        Environment environment;
+
         try {
             // Create the Kubic environment
             stage('Create Environment') {
-                createEnvironment()
+                environment = createEnvironment()
             }
 
             // Bootstrap the Kubic environment
@@ -54,7 +58,7 @@ def call(Map parameters = [:], Closure body) {
             // Prepare the body closure delegate
             def delegate = [:]
             // Set some context variables available inside the body() method
-            //delegate['environment'] = environment
+            delegate['environment'] = environment
             body.resolveStrategy = Closure.DELEGATE_FIRST
             body.delegate = delegate
 
