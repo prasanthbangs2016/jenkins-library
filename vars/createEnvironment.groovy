@@ -13,8 +13,11 @@
 // limitations under the License.
 import com.suse.kubic.Environment
 import com.suse.kubic.Minion
+import groovy.json.JsonBuilder
 
 Environment call(Map parameters = [:]) {
+    int minionCount = parameters.get('minionCount')
+
     Environment environment = new Environment()
 
     timeout(60) {
@@ -29,14 +32,14 @@ Environment call(Map parameters = [:]) {
                 }
             }
 
-            timeout(15) {
+            timeout(30) {
                 sh(script: 'echo "Waiting for Velum"; until $(curl -s -k https://127.0.0.1/ | grep -q "Log in"); do echo -n "."; sleep 3; done')
             }
         },
         'terraform': {
             dir('terraform') {
                 withEnv([
-                    "MINIONS_SIZE=3",
+                    "MINIONS_SIZE=${minionCount}",
                     "SKIP_DASHBOARD=true",
                     "PREFIX=jenkins",
                     "WGET_FLAGS=--no-verbose",
@@ -46,7 +49,7 @@ Environment call(Map parameters = [:]) {
 
                 // This should all live in the TF repo, and always be rendered
                 def minionJson = sh(script: """set -o pipefail; cat terraform.tfstate | jq '.modules[].resources[] | select(.type==\"libvirt_domain\")
-                    | .primary | .attributes | {name: .metadata | split(\",\") | .[0], ipv4: .[\"network_interface.0.addresses.0\"], id: .metadata
+                    | .primary | .attributes | {fqdn: .metadata | split(\",\") | .[0], ipv4: .[\"network_interface.0.addresses.0\"], id: .metadata
                     | split(\",\") | .[1] | tonumber, role: (if (.metadata | split(\",\") | .[1] | tonumber) == 0 then \"master\" else \"worker\" end)}' \
                     | jq -s . | jq '{minions: .}' | tee ${WORKSPACE}/logs/minions.json""", returnStdout: true)
 
@@ -64,7 +67,7 @@ Environment call(Map parameters = [:]) {
                     minion.fqdn = dataMinion.fqdn
                     minion.role = dataMinion.role
                     minion.ipv4 = dataMinion.ipv4
-                    minion.minion_id = shOnMinion(minion: minion, script: 'cat /etc/machine-id', returnStdout: true)
+                    minion.minion_id = shOnMinion(minion: minion, script: 'cat /etc/machine-id', returnStdout: true).trim()
 
                     if (minion.role == "master") {
                         // If we found the master, fill out the
@@ -74,6 +77,8 @@ Environment call(Map parameters = [:]) {
 
                     environment.minions.push(minion)
                 }
+
+                writeFile(file: "${WORKSPACE}/logs/environment.json", text: new JsonBuilder(environment).toPrettyString())
             }
         }
     }

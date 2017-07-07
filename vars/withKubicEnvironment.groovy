@@ -18,6 +18,7 @@ def call(Map parameters = [:], Closure body) {
     def gitBase = parameters.get('gitBase')
     def gitBranch = parameters.get('gitBranch')
     def gitCredentialsId = parameters.get('gitCredentialsId')
+    int minionCount = parameters.get('minionCount', 3)
 
     echo "Creating Kubic Environment"
 
@@ -47,7 +48,7 @@ def call(Map parameters = [:], Closure body) {
         try {
             // Create the Kubic environment
             stage('Create Environment') {
-                environment = createEnvironment()
+                environment = createEnvironment(minionCount: minionCount)
             }
 
             // Bootstrap the Kubic environment
