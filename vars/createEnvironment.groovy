@@ -81,6 +81,7 @@ Environment call(Map parameters = [:]) {
                 }
 
                 writeFile(file: "${WORKSPACE}/logs/environment.json", text: new JsonBuilder(environment).toPrettyString())
+                sh(script: "cat ${WORKSPACE}/logs/environment.json")
             }
         }
     }

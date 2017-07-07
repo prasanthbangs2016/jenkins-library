@@ -29,7 +29,7 @@ def call(Map parameters = [:], Closure body) {
             echo "Node: ${env.NODE_NAME}"
             sh(script: 'ip a')
             def response = httpRequest(url: 'http://169.254.169.254/latest/meta-data/public-ipv4')
-            echo "Public IPv4: " + response.content
+            echo "Public IPv4: ${response.content}"
         }
 
         // Basic prep steps
