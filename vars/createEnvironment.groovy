@@ -44,7 +44,9 @@ Environment call(Map parameters = [:]) {
                     "PREFIX=jenkins",
                     "WGET_FLAGS=--no-verbose",
                 ]) {
-                    sh(script: 'set -o pipefail; ./contrib/libvirt/k8s-libvirt.sh apply 2>&1 | tee ${WORKSPACE}/logs/terraform-apply.log')
+                    ansiColor('xterm') {
+                        sh(script: 'set -o pipefail; ./contrib/libvirt/k8s-libvirt.sh apply 2>&1 | tee ${WORKSPACE}/logs/terraform-apply.log')
+                    }
                 }
 
                 // This should all live in the TF repo, and always be rendered
