@@ -12,20 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 def call(Map parameters = [:]) {
+    int minionCount = parameters.get('minionCount')
 
     timeout(60) {
         parallel 'caasp-devenv-cleanup': {
             dir('caasp-devenv') {
                 sh(script: 'set -o pipefail; ./cleanup --non-interactive 2>&1 | tee ${WORKSPACE}/logs/caasp-devenv-cleanup.log')
             }
-            sh(script: 'docker rmi sles12/velum:0.0 2>&1 | tee ${WORKSPACE}/logs/docker-image-delete.log')
-            sh(script: 'docker rmi sles12/velum:development 2>&1 | tee -a ${WORKSPACE}/logs/docker-image-delete.log')
-            sh(script: 'docker rmi $(docker images -q) 2>&1 | tee -a ${WORKSPACE}/logs/docker-image-delete.log')
+
+            sh(script: 'docker kill $(docker ps -a -q) 2>&1 | tee ${WORKSPACE}/logs/docker-cleanup.log')
+            sh(script: 'docker rm $(docker ps -a -q) 2>&1 | tee -a ${WORKSPACE}/logs/docker-cleanup.log')
+            sh(script: 'docker rmi sles12/velum:0.0 2>&1 | tee -a ${WORKSPACE}/logs/docker-cleanup.log')
+            sh(script: 'docker rmi sles12/velum:development 2>&1 | tee -a ${WORKSPACE}/logs/docker-cleanup.log')
+            sh(script: 'docker rmi $(docker images -q) 2>&1 | tee -a ${WORKSPACE}/logs/docker-cleanup.log')
         },
         'terraform-destroy': {
             dir('terraform') {
                 withEnv([
-                    "MINIONS_SIZE=3",
+                    "MINIONS_SIZE=${minionCount}",
                     "SKIP_DASHBOARD=true",
                     "PREFIX=jenkins",
                     "FORCE=true",

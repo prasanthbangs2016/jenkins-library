@@ -79,7 +79,7 @@ def call(Map parameters = [:], Closure body) {
             // Destroy the Kubic Environment
             stage('Destroy Environment') {
                 try {
-                    cleanupEnvironment()
+                    cleanupEnvironment(minionCount: minionCount)
                 } catch (Exception exc) {
                     echo "Failed to Destroy Environment"
                     // TODO: Figure out if we can mark this stage as failed, while allowing the remaining stages to proceed.
