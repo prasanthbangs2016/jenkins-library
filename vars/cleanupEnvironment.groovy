@@ -22,9 +22,9 @@ def call(Map parameters = [:]) {
 
             sh(script: 'docker kill $(docker ps -a -q) 2>&1 | tee ${WORKSPACE}/logs/docker-cleanup.log')
             sh(script: 'docker rm $(docker ps -a -q) 2>&1 | tee -a ${WORKSPACE}/logs/docker-cleanup.log')
-            sh(script: 'docker rmi sles12/velum:0.0 2>&1 | tee -a ${WORKSPACE}/logs/docker-cleanup.log')
-            sh(script: 'docker rmi sles12/velum:development 2>&1 | tee -a ${WORKSPACE}/logs/docker-cleanup.log')
-            sh(script: 'docker rmi $(docker images -q) 2>&1 | tee -a ${WORKSPACE}/logs/docker-cleanup.log')
+            sh(script: 'docker rmi --no-prune sles12/velum:0.0 2>&1 | tee -a ${WORKSPACE}/logs/docker-cleanup.log')
+            sh(script: 'docker rmi --no-prune sles12/velum:development 2>&1 | tee -a ${WORKSPACE}/logs/docker-cleanup.log')
+            sh(script: 'docker rmi --no-prune $(docker images -q) 2>&1 | tee -a ${WORKSPACE}/logs/docker-cleanup.log')
         },
         'terraform': {
             dir('terraform') {
