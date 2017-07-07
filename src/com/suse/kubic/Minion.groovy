@@ -5,4 +5,5 @@ class Minion implements Serializable {
 	String fqdn;
 	String role;
 	String ipv4;
+	String minion_id;
 }

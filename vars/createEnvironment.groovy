@@ -64,6 +64,7 @@ Environment call(Map parameters = [:]) {
                     minion.fqdn = dataMinion.fqdn
                     minion.role = dataMinion.role
                     minion.ipv4 = dataMinion.ipv4
+                    minion.minion_id = shOnMinion(minion: minion, script: 'cat /etc/machine-id', returnStdout: true)
 
                     if (minion.role == "master") {
                         // If we found the master, fill out the
