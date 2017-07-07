@@ -53,7 +53,7 @@ def call(Map parameters = [:], Closure body) {
 
             // Bootstrap the Kubic environment
             stage('Bootstrap Environment') {
-                echo "TODO"
+                bootstrapEnvironment(environment: environment)
             }
 
             // Prepare the body closure delegate
