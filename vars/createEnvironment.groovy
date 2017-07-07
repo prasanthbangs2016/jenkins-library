@@ -26,10 +26,7 @@ def call(Map parameters = [:]) {
             }
 
             timeout(15) {
-                waitUntil {
-                    def r = sh(script: 'curl -s -k https://127.0.0.1/ | grep -q "Log in"', returnStatus: true)
-                    return (r == 0);
-                }
+                sh(script: 'echo "Waiting for Velum"; until $(curl -s -k https://127.0.0.1/ | grep -q "Log in"); do echo -n "."; sleep 3; done')
             }
         },
         'terraform': {
