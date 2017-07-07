@@ -15,7 +15,7 @@ def call(Map parameters = [:]) {
     int minionCount = parameters.get('minionCount')
 
     timeout(60) {
-        parallel 'caasp-devenv-cleanup': {
+        parallel 'caasp-devenv': {
             dir('caasp-devenv') {
                 sh(script: 'set -o pipefail; ./cleanup --non-interactive 2>&1 | tee ${WORKSPACE}/logs/caasp-devenv-cleanup.log')
             }
@@ -26,7 +26,7 @@ def call(Map parameters = [:]) {
             sh(script: 'docker rmi sles12/velum:development 2>&1 | tee -a ${WORKSPACE}/logs/docker-cleanup.log')
             sh(script: 'docker rmi $(docker images -q) 2>&1 | tee -a ${WORKSPACE}/logs/docker-cleanup.log')
         },
-        'terraform-destroy': {
+        'terraform': {
             dir('terraform') {
                 withEnv([
                     "MINIONS_SIZE=${minionCount}",
