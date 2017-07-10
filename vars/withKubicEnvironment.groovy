@@ -81,8 +81,9 @@ def call(Map parameters = [:], Closure body) {
                 try {
                     cleanupEnvironment(minionCount: minionCount)
                 } catch (Exception exc) {
-                    echo "Failed to Destroy Environment"
                     // TODO: Figure out if we can mark this stage as failed, while allowing the remaining stages to proceed.
+                    echo "Failed to Destroy Environment"
+                    deleteJenkinsSlave()
                 }
             }
 
