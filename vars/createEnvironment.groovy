@@ -43,6 +43,7 @@ Environment call(Map parameters = [:]) {
                     "SKIP_DASHBOARD=true",
                     "PREFIX=jenkins",
                     "WGET_FLAGS=--no-verbose",
+                    "NO_COLOR=true",
                 ]) {
                     ansiColor('xterm') {
                         sh(script: 'set -o pipefail; ./contrib/libvirt/k8s-libvirt.sh apply 2>&1 | tee ${WORKSPACE}/logs/terraform-apply.log')
