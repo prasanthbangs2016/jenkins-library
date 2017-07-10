@@ -69,10 +69,10 @@ def call(Map parameters = [:], Closure body) {
             // Gather logs from the environment
             stage('Gather Logs') {
                 try {
-                    sh(script: "touch logs/dummy.log")
+                    gatherKubicLogs(environment: environment)
                 } catch (Exception exc) {
-                    echo "Failed to Gather Logs"
                     // TODO: Figure out if we can mark this stage as failed, while allowing the remaining stages to proceed.
+                    echo "Failed to Gather Logs"
                 }
             }
 
@@ -90,10 +90,10 @@ def call(Map parameters = [:], Closure body) {
             // Archive the logs
             stage('Archive Logs') {
                 try {
-                    archiveArtifacts(artifacts: 'logs/*', fingerprint: true)
+                    archiveArtifacts(artifacts: 'logs/**', fingerprint: true)
                 } catch (Exception exc) {
-                    echo "Failed to Archive Logs"
                     // TODO: Figure out if we can mark this stage as failed, while allowing the remaining stages to proceed.
+                    echo "Failed to Archive Logs"
                 }
             }
         }
