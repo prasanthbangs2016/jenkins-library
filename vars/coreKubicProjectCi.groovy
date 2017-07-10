@@ -13,7 +13,7 @@
 // limitations under the License.
 def call(Map parameters = [:]) {
     echo "Starting Kubic core project CI"
-    
+
     // TODO: We may want to do different things here, based on if we're
     //       testing a PR, a branch, or a nightly?
 
@@ -24,8 +24,25 @@ def call(Map parameters = [:]) {
             gitCredentialsId: 'github-token',
             minionCount: 3) {
 
-        stage('Run Tests') {
-            echo "TODO"
+        stage('Run Infrastructure Tests') {
+
+            writeFile(file: "${env.WORKSPACE}/ssh_config", text: """
+Host 10.17.3.*
+     User root
+     IdentityFile ${env.WORKSPACE}/terraform/ssh/id_docker
+     UserKnownHostsFile /dev/null
+     StrictHostKeyChecking no
+"""
+)
+
+            dir("kubic-testinfra"){
+                createPythonVenv(name: "testinfra")
+                inPythonVenv(name: "testinfra", script:"pip install -r requirements.txt")
+                environment.minions.each { minion ->
+                    inPythonVenv(name:"testinfra", script:"pytest --ssh-config=${env.WORKSPACE}/ssh_config --sudo --hosts=${minion.ipv4} -m \"${minion.role} or common\" --junit-xml ${minion.role}-${minion.id}.xml -v | tee -a ${env.WORKSPACE}/logs/testinfra.log")
+                }
+                junit '*.xml'
+            }
         }
     }
 }

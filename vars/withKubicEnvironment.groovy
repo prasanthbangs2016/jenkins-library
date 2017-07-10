@@ -60,7 +60,6 @@ def call(Map parameters = [:], Closure body) {
             def delegate = [:]
             // Set some context variables available inside the body() method
             delegate['environment'] = environment
-            body.resolveStrategy = Closure.DELEGATE_FIRST
             body.delegate = delegate
 
             // Execute the body of the test
