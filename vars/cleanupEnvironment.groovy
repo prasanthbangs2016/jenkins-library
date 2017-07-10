@@ -16,6 +16,8 @@ def call(Map parameters = [:]) {
 
     timeout(60) {
         parallel 'caasp-devenv': {
+            sh(script: 'killall -9 kubelet')
+
             dir('caasp-devenv') {
                 sh(script: 'set -o pipefail; ./cleanup --non-interactive 2>&1 | tee ${WORKSPACE}/logs/caasp-devenv-cleanup.log')
             }

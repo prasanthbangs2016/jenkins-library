@@ -35,9 +35,24 @@ Environment call(Map parameters = [:]) {
             return (minions['minions'].size() == (environment.minions.size() + 2))
         }
     }
+
+    // Give the Minions time to notice their keys have been accepted
+    sleep(time: 20)
+
+    timeout(10) {
+        waitUntil {
+            def minions = inDockerContainer(name:'velum-dashboard', script: "entrypoint.sh rails runner 'ActiveRecord::Base.logger=nil; puts Minion.count'", returnStdout: true).trim()
+
+            return (minions == Integer.toString(environment.minions.size()))
+        }
+    }
+
+    inDockerContainer(name:'salt-master', script: "salt -l info '*' test.ping")
+    inDockerContainer(name:'salt-master', script: "salt -l info '*' saltutil.refresh_grains")
     
     inDockerContainer(name:'velum-dashboard', script:"entrypoint.sh rails runner 'ActiveRecord::Base.logger=nil; Pillar.create pillar: \"api:server:external_fqdn\", value: \"${environment.kubernetesHost}\"'")
     inDockerContainer(name:'velum-dashboard', script:"entrypoint.sh rails runner 'ActiveRecord::Base.logger=nil; Pillar.create pillar: \"dashboard\", value: \"${environment.dashboardHost}\"'")
+
     environment.minions.each { minion ->
         if (minion.role == 'master') { 
             inDockerContainer(name:'salt-master', script:"salt '${minion.minion_id}' grains.setval roles \"['kube-master']\"")
@@ -45,7 +60,8 @@ Environment call(Map parameters = [:]) {
             inDockerContainer(name:'salt-master', script:"salt '${minion.minion_id}' grains.setval roles \"['kube-minion']\"")
         }
     }
+
     timeout(60) {
-        inDockerContainer(name:'salt-master', script:'salt-run -l info state.orch orch.kubernetes', returnStdout: true)
+        inDockerContainer(name:'salt-master', script:'salt-run -l info state.orch orch.kubernetes')
     }
 }
