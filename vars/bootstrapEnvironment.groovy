@@ -37,6 +37,7 @@ Environment call(Map parameters = [:]) {
     }
     
     inDockerContainer(name:'velum-dashboard', script:"entrypoint.sh rails runner 'ActiveRecord::Base.logger=nil; Pillar.create pillar: \"api:server:external_fqdn\", value: \"k8s.jenkins.caasp.suse.net\"'")
+    inDockerContainer(name:'velum-dashboard', script:"entrypoint.sh rails runner 'ActiveRecord::Base.logger=nil; Pillar.create pillar: \"dashboard\", value: \"${environment.dashboardHost}\"'")
     environment.minions.each { minion ->
         if (minion.role == 'master') { 
             inDockerContainer(name:'salt-master', script:"salt '${minion.minion_id}' grains.setval roles \"['kube-master']\"")
