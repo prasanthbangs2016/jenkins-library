@@ -4,6 +4,7 @@ package com.suse.kubic;
 class Environment implements Serializable {
 	String dashboardHost;
 	String kubernetesHost;
+	String kubeconfigFile;
 
 	List<Minion> minions = new ArrayList<>();
 }
