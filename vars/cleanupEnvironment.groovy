@@ -34,6 +34,7 @@ def call(Map parameters = [:]) {
                     "PREFIX=jenkins",
                     "FORCE=true",
                     "WGET_FLAGS=--no-verbose",
+                    "NO_COLOR=true",
                 ]) {
                     ansiColor('xterm') {
                         sh(script: 'set -o pipefail; ./contrib/libvirt/k8s-libvirt.sh destroy 2>&1 | tee ${WORKSPACE}/logs/terraform-destroy.log')
