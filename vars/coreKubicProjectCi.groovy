@@ -23,23 +23,25 @@ def call(Map parameters = [:]) {
     // Pipeline and library from the target branch and NOT from the
     // outside collaborators fork / pull request.
     if (env.CHANGE_AUTHOR != null) {
-        def membersResponse = httpRequest(
-            url: "https://api.github.com/orgs/kubic-project/members/${CHANGE_AUTHOR}",
-            authentication: "github-token",
-            validResponseCodes: "204:404")
+        stage('Collaborator Check') {
+            def membersResponse = httpRequest(
+                url: "https://api.github.com/orgs/kubic-project/members/${CHANGE_AUTHOR}",
+                authentication: "github-token",
+                validResponseCodes: "204:404")
 
-        if (membersResponse.status == 204) {
-            echo "Test execution for collaborator ${CHANGE_AUTHOR} allowed"
+            if (membersResponse.status == 204) {
+                echo "Test execution for collaborator ${CHANGE_AUTHOR} allowed"
 
-        } else {
-            def userInput = input(id: 'userInput', message: "Change Author is not a Kubic Project member: ${CHANGE_AUTHOR}", parameters: [
-                [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Run tests anyway?', name: 'allowExecution']
-            ])
+            } else {
+                def userInput = input(id: 'userInput', message: "Change Author is not a Kubic Project member: ${CHANGE_AUTHOR}", parameters: [
+                    [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Run tests anyway?', name: 'allowExecution']
+                ])
 
-            if (!userInput['allowExecution']) {
-                echo "Test execution for unknown user (${CHANGE_AUTHOR}) disallowed"
-                currentBuild.result = 'FAILURE'
-                return;
+                if (!userInput['allowExecution']) {
+                    echo "Test execution for unknown user (${CHANGE_AUTHOR}) disallowed"
+                    currentBuild.result = 'FAILURE'
+                    return;
+                }
             }
         }
     }
