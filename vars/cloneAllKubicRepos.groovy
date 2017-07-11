@@ -37,6 +37,9 @@ def call(Map parameters = [:]) {
         },
         'testinfra': {
             cloneKubicRepo(gitBase: gitBase, branch: branch, credentialsId: credentialsId, repo: "testinfra")
+        },
+        'automation': {
+            cloneKubicRepo(gitBase: gitBase, branch: branch, credentialsId: credentialsId, repo: "automation")
         }
     }
 }

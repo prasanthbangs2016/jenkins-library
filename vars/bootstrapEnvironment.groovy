@@ -18,50 +18,22 @@ import com.suse.kubic.Minion
 Environment call(Map parameters = [:]) {
     Environment environment = parameters.get('environment')
 
-    // TODO - This should use Velum / other actual APIs - not this.
-
-    timeout(10) {
-        waitUntil {
-            def minions = readJSON(text:inDockerContainer(name:'salt-master', script:'salt-key --list pre --out json', returnStdout: true))
-
-            return (minions['minions_pre'].size() == environment.minions.size())
-        }
-    }
-    inDockerContainer(name:'salt-master', script:'salt-key --accept-all --yes')
-    timeout(10) {
-        waitUntil {
-            def minions = readJSON(text:inDockerContainer(name:'salt-master', script:'salt-key --list accepted --out json', returnStdout: true))
-
-            return (minions['minions'].size() == (environment.minions.size() + 2))
+    timeout(90) {
+        dir('automation/velum-bootstrap') {
+            sh(script: 'bundle config build.nokogiri --use-system-libraries; bundle install')
         }
     }
 
-    // Give the Minions time to notice their keys have been accepted
-    sleep(time: 20)
-
-    timeout(10) {
-        waitUntil {
-            def minions = inDockerContainer(name:'velum-dashboard', script: "entrypoint.sh rails runner 'ActiveRecord::Base.logger=nil; puts Minion.count'", returnStdout: true).trim()
-
-            return (minions == Integer.toString(environment.minions.size()))
+    timeout(90) {
+        dir('automation/velum-bootstrap') {
+            withEnv([
+                "VERBOSE=true",
+                "ENVIRONMENT=${WORKSPACE}/terraform/environment.json",
+                // TODO: drop this after switching to a VM based admin setup
+                "DEVENV=true",
+            ]) {
+                sh(script: 'bundle exec rspec spec/**/*')
+            }
         }
-    }
-
-    inDockerContainer(name:'salt-master', script: "salt -l info '*' test.ping")
-    inDockerContainer(name:'salt-master', script: "salt -l info '*' saltutil.refresh_grains")
-    
-    inDockerContainer(name:'velum-dashboard', script:"entrypoint.sh rails runner 'ActiveRecord::Base.logger=nil; Pillar.create pillar: \"api:server:external_fqdn\", value: \"${environment.kubernetesHost}\"'")
-    inDockerContainer(name:'velum-dashboard', script:"entrypoint.sh rails runner 'ActiveRecord::Base.logger=nil; Pillar.create pillar: \"dashboard\", value: \"${environment.dashboardHost}\"'")
-
-    environment.minions.each { minion ->
-        if (minion.role == 'master') { 
-            inDockerContainer(name:'salt-master', script:"salt '${minion.minionId}' grains.setval roles \"['kube-master']\"")
-        } else {
-            inDockerContainer(name:'salt-master', script:"salt '${minion.minionId}' grains.setval roles \"['kube-minion']\"")
-        }
-    }
-
-    timeout(60) {
-        inDockerContainer(name:'salt-master', script:'salt-run -l info state.orch orch.kubernetes')
     }
 }
