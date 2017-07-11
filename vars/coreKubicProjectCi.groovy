@@ -35,7 +35,7 @@ Host 10.17.3.*
 """
 )
 
-            dir("kubic-testinfra"){
+            dir("testinfra"){
                 createPythonVenv(name: "testinfra")
                 inPythonVenv(name: "testinfra", script:"pip install -r requirements.txt")
                 environment.minions.each { minion ->
