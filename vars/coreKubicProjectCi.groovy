@@ -33,13 +33,13 @@ def call(Map parameters = [:]) {
                 echo "Test execution for collaborator ${CHANGE_AUTHOR} allowed"
 
             } else {
-                def allowExecution = input(id: 'userInput', message: "Change Author is not a Kubic Project member: ${CHANGE_AUTHOR}", parameters: [
+                def allowExecution = input(id: 'userInput', message: "Change author is not a Kubic Project member: ${CHANGE_AUTHOR}", parameters: [
                     [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Run tests anyway?', name: 'allowExecution']
                 ])
 
                 if (!allowExecution) {
                     echo "Test execution for unknown user (${CHANGE_AUTHOR}) disallowed"
-                    currentBuild.result = 'FAILURE'
+                    error(message: "Test execution for unknown user (${CHANGE_AUTHOR}) disallowed")
                     return;
                 }
             }
