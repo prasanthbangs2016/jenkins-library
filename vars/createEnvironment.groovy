@@ -50,38 +50,28 @@ Environment call(Map parameters = [:]) {
                     }
                 }
 
-                // This should all live in the TF repo, and always be rendered
-                def minionJson = sh(script: """set -o pipefail; cat terraform.tfstate | jq '.modules[].resources[] | select(.type==\"libvirt_domain\")
-                    | .primary | .attributes | {fqdn: .metadata | split(\",\") | .[0], ipv4: .[\"network_interface.0.addresses.0\"], id: .metadata
-                    | split(\",\") | .[1] | tonumber, role: (if (.metadata | split(\",\") | .[1] | tonumber) == 0 then \"master\" else \"worker\" end)}' \
-                    | jq -s . | jq '{minions: .}' | tee ${WORKSPACE}/logs/minions.json""", returnStdout: true)
+                // Read the generated environment file
+                def tfEnvironment = readJSON(file: 'environment.json')
 
-                // Fill out the dashboardHost
-                environment.dashboardHost = sh(script: """ip addr show \$(awk '\$2 == 00000000 { print \$1 }' /proc/net/route) \
-                    | awk '\$1 == \"inet\" {print \$2}' | cut -f1 -d/""", returnStdout: true).trim()
+                // Fill out the dashboardHost and kubernetesHost
+                environment.dashboardHost = tfEnvironment.dashboardHost
+                environment.kubernetesHost = tfEnvironment.kubernetesHost
+                environment.sshUser = tfEnvironment.sshUser
+                environment.sshKey = tfEnvironment.sshKey
 
-                // Fill out the minions
-                def data = readJSON(text: minionJson)
-
-                data.minions.each { dataMinion ->
+                tfEnvironment.minions.each { tfMinion ->
                     Minion minion = new Minion()
 
-                    minion.id = dataMinion.id
-                    minion.fqdn = dataMinion.fqdn
-                    minion.role = dataMinion.role
-                    minion.ipv4 = dataMinion.ipv4
-                    minion.minion_id = shOnMinion(minion: minion, script: 'cat /etc/machine-id', returnStdout: true).trim()
-
-                    if (minion.role == "master") {
-                        // If we found the master, fill out the
-                        // kubernetes host
-                        environment.kubernetesHost = dataMinion.ipv4
-                    }
+                    minion.id = tfMinion.id
+                    minion.fqdn = tfMinion.fqdn
+                    minion.role = tfMinion.role
+                    minion.ipv4 = tfMinion.ipv4
+                    minion.minionId = tfMinion.minionId != null ? tfMinion.minionId : tfMinion.minionID
 
                     environment.minions.push(minion)
                 }
 
-                writeFile(file: "${WORKSPACE}/logs/environment.json", text: new JsonBuilder(environment).toPrettyString())
+                sh(script: "cp environment.json ${WORKSPACE}/logs/environment.json")
                 sh(script: "cat ${WORKSPACE}/logs/environment.json")
             }
         }

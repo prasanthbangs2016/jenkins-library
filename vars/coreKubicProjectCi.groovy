@@ -57,8 +57,8 @@ def call(Map parameters = [:]) {
 
             writeFile(file: "${env.WORKSPACE}/ssh_config", text: """
 Host 10.17.3.*
-     User root
-     IdentityFile ${env.WORKSPACE}/terraform/ssh/id_docker
+     User ${environment.sshUser}
+     IdentityFile ${environment.sshKey}
      UserKnownHostsFile /dev/null
      StrictHostKeyChecking no
 """
