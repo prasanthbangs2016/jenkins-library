@@ -16,7 +16,7 @@ import hudson.slaves.OfflineCause
 import jenkins.plugins.openstack.compute.JCloudsSlave
 
 def call(Map parameters = [:]) {
-    int name = parameters.get('name', env.NODE_NAME)
+    String name = parameters.get('name', env.NODE_NAME)
 
     JCloudsSlave computer = Jenkins.instance.getNode(name)
 
