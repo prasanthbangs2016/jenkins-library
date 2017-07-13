@@ -55,9 +55,9 @@ Environment call(Map parameters = [:]) {
 
     environment.minions.each { minion ->
         if (minion.role == 'master') { 
-            inDockerContainer(name:'salt-master', script:"salt '${minion.minion_id}' grains.setval roles \"['kube-master']\"")
+            inDockerContainer(name:'salt-master', script:"salt '${minion.minionId}' grains.setval roles \"['kube-master']\"")
         } else {
-            inDockerContainer(name:'salt-master', script:"salt '${minion.minion_id}' grains.setval roles \"['kube-minion']\"")
+            inDockerContainer(name:'salt-master', script:"salt '${minion.minionId}' grains.setval roles \"['kube-minion']\"")
         }
     }
 
