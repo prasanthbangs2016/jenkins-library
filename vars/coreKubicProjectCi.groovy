@@ -28,7 +28,7 @@ def call(Map parameters = [:]) {
         stage('Run Tests') {
             // TODO: Add some cluster tests, e.g. booting pods, checking they work, etc
             parallel 'testinfra': {
-                runRestInfra(environment: environment)
+                runTestInfra(environment: environment)
             }
         }
     }
