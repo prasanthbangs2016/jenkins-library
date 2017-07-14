@@ -17,33 +17,8 @@ def call(Map parameters = [:]) {
     // TODO: We may want to do different things here, based on if we're
     //       testing a PR, a branch, or a nightly?
 
-    // Check if a change is from collaborator, or not.
-    // Require approval for non-collaborators. As non-collaborators are
-    // already considered untrusted by Jenkins, Jenkins will load the
-    // Pipeline and library from the target branch and NOT from the
-    // outside collaborators fork / pull request.
     if (env.CHANGE_AUTHOR != null) {
-        stage('Collaborator Check') {
-            def membersResponse = httpRequest(
-                url: "https://api.github.com/orgs/kubic-project/members/${CHANGE_AUTHOR}",
-                authentication: "github-token",
-                validResponseCodes: "204:404")
-
-            if (membersResponse.status == 204) {
-                echo "Test execution for collaborator ${CHANGE_AUTHOR} allowed"
-
-            } else {
-                def allowExecution = input(id: 'userInput', message: "Change author is not a Kubic Project member: ${CHANGE_AUTHOR}", parameters: [
-                    [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Run tests anyway?', name: 'allowExecution']
-                ])
-
-                if (!allowExecution) {
-                    echo "Test execution for unknown user (${CHANGE_AUTHOR}) disallowed"
-                    error(message: "Test execution for unknown user (${CHANGE_AUTHOR}) disallowed")
-                    return;
-                }
-            }
-        }
+        githubCollaboratorCheck(org: 'kubic-project', user: env.CHANGE_AUTHOR, credentialsId: 'github-token')
     }
 
     withKubicEnvironment(
