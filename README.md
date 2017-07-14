@@ -22,6 +22,11 @@ Sample Jenkinsfiles
     library "kubic-jenkins-library@${targetBranch}"
     coreKubicProjectCi()
 
+### Example Jenkinsfile for a Periodic Kubic build
+
+	library "kubic-jenkins-library@${env.BRANCH_NAME}"
+	coreKubicProjectPeriodic(minionCount: 50)
+
 Pipeline Methods
 ----------------
 
