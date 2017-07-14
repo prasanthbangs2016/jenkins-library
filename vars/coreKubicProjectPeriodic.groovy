@@ -12,24 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 def call(Map parameters = [:]) {
-    echo "Starting Kubic core project CI"
+    int minionCount = parameters.get('minionCount')
 
-    if (env.CHANGE_AUTHOR != null) {
-        githubCollaboratorCheck(org: 'kubic-project', user: env.CHANGE_AUTHOR, credentialsId: 'github-token')
-    }
+    echo "Starting Kubic core project periodic"
 
+    // TODO: Make this an OpenStack based deploy with 50+ nodes.
     withKubicEnvironment(
             nodeLabel: 'leap42.2&&m1.xlarge',
             gitBase: 'https://github.com/kubic-project',
             gitBranch: env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME),
             gitCredentialsId: 'github-token',
-            minionCount: 3) {
+            minionCount: minionCount) {
 
-        stage('Run Tests') {
+        stage('Run Basic Tests') {
             // TODO: Add some cluster tests, e.g. booting pods, checking they work, etc
             parallel 'testinfra': {
                 runTestInfra(environment: environment)
             }
+        }
+
+        stage('Run Kube e2e-tests') {
+            // TODO... 
         }
     }
 }
