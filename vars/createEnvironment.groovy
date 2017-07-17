@@ -42,7 +42,7 @@ Environment call(Map parameters = [:]) {
                     "MINIONS_SIZE=${minionCount}",
                     "SKIP_DASHBOARD=true",
                     "PREFIX=jenkins",
-                    "WGET_FLAGS=--no-verbose",
+                    "WGET_FLAGS=--progress=dot:giga",
                     "NO_COLOR=true",
                 ]) {
                     ansiColor('xterm') {
