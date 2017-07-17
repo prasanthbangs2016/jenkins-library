@@ -14,6 +14,8 @@
 def call(Map parameters = [:]) {
     echo "Starting Kubic core project CI"
 
+    int minionCount = parameters.get('minionCount', 3)
+
     if (env.CHANGE_AUTHOR != null) {
         githubCollaboratorCheck(org: 'kubic-project', user: env.CHANGE_AUTHOR, credentialsId: 'github-token')
     }
@@ -23,7 +25,7 @@ def call(Map parameters = [:]) {
             gitBase: 'https://github.com/kubic-project',
             gitBranch: env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME),
             gitCredentialsId: 'github-token',
-            minionCount: 3) {
+            minionCount: minionCount) {
 
         stage('Run Tests') {
             // TODO: Add some cluster tests, e.g. booting pods, checking they work, etc

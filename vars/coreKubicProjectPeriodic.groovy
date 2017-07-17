@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 def call(Map parameters = [:], Closure body = null) {
-    int minionCount = parameters.get('minionCount')
+    int minionCount = parameters.get('minionCount', 3)
 
     echo "Starting Kubic core project periodic"
 
