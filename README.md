@@ -27,6 +27,16 @@ Sample Jenkinsfiles
 	library "kubic-jenkins-library@${env.BRANCH_NAME}"
 	coreKubicProjectPeriodic(minionCount: 50)
 
+### Example Jenkinsfile for a Periodic Kubic build with additional stages
+
+	library "kubic-jenkins-library@${env.BRANCH_NAME}"
+	coreKubicProjectPeriodic(minionCount: 50) {
+		stage('Perform Some Additional Tasks') {
+			// Add any extra step here
+		}
+	}
+
+
 Pipeline Methods
 ----------------
 
