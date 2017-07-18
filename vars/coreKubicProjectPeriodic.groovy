@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-def call(Map parameters = [:]) {
+def call(Map parameters = [:], Closure body = null) {
     int minionCount = parameters.get('minionCount')
 
     echo "Starting Kubic core project periodic"
@@ -31,8 +31,15 @@ def call(Map parameters = [:]) {
             }
         }
 
-        stage('Run Kube e2e-tests') {
-            // TODO... 
+        if (body != null) {
+            // Prepare the body closure delegate
+            def delegate = [:]
+            // Set some context variables available inside the body() method
+            delegate['environment'] = environment
+            body.delegate = delegate
+
+            // Execute the body of the test
+            body()
         }
     }
 }
