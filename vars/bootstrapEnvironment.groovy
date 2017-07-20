@@ -25,15 +25,19 @@ Environment call(Map parameters = [:]) {
     }
 
     timeout(90) {
-        dir('automation/velum-bootstrap') {
-            withEnv([
-                "VERBOSE=true",
-                "ENVIRONMENT=${WORKSPACE}/terraform/environment.json",
-                // TODO: drop this after switching to a VM based admin setup
-                "DEVENV=true",
-            ]) {
-                sh(script: 'bundle exec rspec spec/**/*')
+        try {
+            dir('automation/velum-bootstrap') {
+                withEnv([
+                    "VERBOSE=true",
+                    "ENVIRONMENT=${WORKSPACE}/terraform/environment.json",
+                    // TODO: drop this after switching to a VM based admin setup
+                    "DEVENV=true",
+                ]) {
+                    sh(script: "bundle exec rspec --format RspecJunitFormatter --out ${WORKSPACE}/velum-bootstrap.xml spec/**/*")
+                }
             }
+        } finally {
+            junit "velum-bootstrap.xml"
         }
     }
 }
