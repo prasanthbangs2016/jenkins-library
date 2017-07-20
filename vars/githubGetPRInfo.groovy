@@ -13,16 +13,40 @@
 // limitations under the License.
 
 import groovy.json.JsonSlurper
+import com.suse.kubic.PullRequest
 
 def call(Map parameters = [:]) {
-    String org = parameters.get('org')
-    String repo = parameters.get('repo')
     String num = parameters.get('num', env.CHANGE_ID)
 
-    echo "Getting PR-${num} details from GitHub"
+    if (env.CHANGE_URL == null) {
+        return NULL
+    }
 
-    def response = httpRequest(url: "https://api.github.com/repos/${org}/${repo}/pulls/${num}")
-    // TODO: process the response.status
-    def slurper = new groovy.json.JsonSlurper()
-    return slurper.parseText(response.content)
+    // we must replace some parts in order to get the corresponding URL in the API
+    url = env.CHANGE_URL
+    url = url.replace("/github.com/","/api.github.com/repos/")
+    url = url.replace("/pull/","/pulls/")
+    url = url.replace("http://","https://")
+
+    echo "Getting PR-${num} details from GitHub from ${url}"
+    PullRequest pr = new PullRequest()
+
+    slurper = new groovy.json.JsonSlurper()
+
+    // TODO: add authentication, so our API requests are not throttled
+    response = httpRequest(url: url, validResponseCodes: "200")
+    parsed = slurper.parseText(response.content)
+    description = parsed.body
+
+    def tag_regexp = /\/(\w+)\r\n/
+    def tag_matches = (description =~ /$tag_regexp/)
+    if (tag_matches.count > 0) {
+        for (tag_match in tag_matches) {
+            tag = tag_match[1]
+            echo "Adding PR tag ${tag}"
+            pr.tags.add(tag)
+        }
+    }
+
+    return pr
 }

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import com.suse.kubic.Environment
+import com.suse.kubic.PullRequest
 
 def call(Map parameters = [:], Closure body) {
     def nodeLabel = parameters.get('nodeLabel', 'devel')
@@ -24,6 +25,9 @@ def call(Map parameters = [:], Closure body) {
 
     // Allocate a node
     node (nodeLabel) {
+
+        PullRequest pr;
+
         // Show some info about the node were running on
         stage('Node Info') {
             echo "Node: ${env.NODE_NAME}"
@@ -36,6 +40,7 @@ def call(Map parameters = [:], Closure body) {
         stage('Preparation') {
             step([$class: 'WsCleanup'])
             sh(script: 'mkdir logs')
+            pr = githubGetPRInfo()
         }
 
         // Fetch the necessary code
