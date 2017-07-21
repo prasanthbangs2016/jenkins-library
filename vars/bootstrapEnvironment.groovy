@@ -38,6 +38,11 @@ Environment call(Map parameters = [:]) {
             }
         } finally {
             junit "velum-bootstrap.xml"
+            try {
+                archiveArtifacts(artifacts: '*.png', fingerprint: true)
+            } catch (Exception exc) {
+                echo "Failed to Archive Screenshots"
+            }
         }
     }
 }
