@@ -28,7 +28,11 @@ Environment call(Map parameters = [:]) {
                     "SALT_DIR=${WORKSPACE}/salt/",
                     "VELUM_DIR=${WORKSPACE}/velum/",
                 ]) {
-                    sh(script: 'set -o pipefail; ./start --non-interactive 2>&1 | tee ${WORKSPACE}/logs/caasp-devenv-start.log &')
+                    withCredentials([
+                        string(variable: 'REGISTRY_URL', credentialsId: 'caasp-docker-registry-host')
+                    ]) {
+                        sh(script: 'set -o pipefail; ./start --non-interactive 2>&1 | tee ${WORKSPACE}/logs/caasp-devenv-start.log &')
+                    }
                 }
             }
 
