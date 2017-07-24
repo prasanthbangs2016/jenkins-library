@@ -32,9 +32,7 @@ Environment call(Map parameters = [:]) {
                 }
             }
 
-            timeout(30) {
-                sh(script: 'echo "Waiting for Velum"; until $(curl -s -k https://127.0.0.1/ | grep -q "Log in"); do echo -n "."; sleep 3; done')
-            }
+            sh(script: 'echo "Waiting for Velum"; until $(curl -s -k https://127.0.0.1/ | grep -q "Log in"); do echo -n "."; sleep 3; done')
         },
         'terraform': {
             dir('terraform') {
