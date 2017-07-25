@@ -27,6 +27,7 @@ Environment call(Map parameters = [:]) {
                     "CONTAINER_MANIFESTS_DIR=${WORKSPACE}/caasp-container-manifests/",
                     "SALT_DIR=${WORKSPACE}/salt/",
                     "VELUM_DIR=${WORKSPACE}/velum/",
+                    "STAGING=devel",
                 ]) {
                     withCredentials([
                         string(variable: 'REGISTRY_URL', credentialsId: 'caasp-docker-registry-host')
@@ -46,6 +47,7 @@ Environment call(Map parameters = [:]) {
                     "PREFIX=jenkins",
                     "WGET_FLAGS=--progress=dot:giga",
                     "NO_COLOR=true",
+                    "STAGING=devel",
                 ]) {
                     ansiColor('xterm') {
                         sh(script: 'set -o pipefail; ./contrib/libvirt/k8s-libvirt.sh apply 2>&1 | tee ${WORKSPACE}/logs/terraform-apply.log')
