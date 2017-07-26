@@ -34,7 +34,7 @@ def call(Map parameters = [:]) {
     ])
 
     withKubicEnvironment(
-            nodeLabel: 'leap42.2&&m1.xxlarge',
+            nodeLabel: 'leap42.3&&m1.xxlarge',
             environmentType: 'caasp-kvm',
             gitBase: 'https://github.com/kubic-project',
             gitBranch: env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME),
