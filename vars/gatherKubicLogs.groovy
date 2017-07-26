@@ -43,6 +43,7 @@ def call(Map parameters = [:]) {
             }
 
             sh(script: 'set -o pipefail; docker exec -i $(docker ps | grep velum-dashboard | awk \'{print $1}\') entrypoint.sh bundle exec rails runner \'puts(Pillar.all.to_yaml)\' &> ${WORKSPACE}/logs/velum-pillar.yaml', returnStatus: true)
+            sh(script: 'set -o pipefail; docker exec -i $(docker ps | grep velum-dashboard | awk \'{print $1}\') entrypoint.sh bundle exec rails runner \'puts(Minion.all.to_yaml)\' &> ${WORKSPACE}/logs/velum-minions.yaml', returnStatus: true)
             sh(script: 'set -o pipefail; docker exec -i $(docker ps | grep velum-dashboard | awk \'{print $1}\') entrypoint.sh bundle exec rails runner \'puts(SaltEvent.all.map(&:parsed_data).to_yaml)\' &> ${WORKSPACE}/logs/velum-salt-events.yaml', returnStatus: true)
         },
         'master': {
