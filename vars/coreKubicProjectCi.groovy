@@ -17,7 +17,13 @@ def call(Map parameters = [:]) {
     int minionCount = parameters.get('minionCount', 3)
 
     if (env.CHANGE_AUTHOR != null) {
-        githubCollaboratorCheck(org: 'kubic-project', user: env.CHANGE_AUTHOR, credentialsId: 'github-token')
+        // TODO: Don't hardcode salt repo name, find the right place
+        // to lookup this information dynamically.
+        githubCollaboratorCheck(
+            org: 'kubic-project',
+            repo: 'salt',
+            user: env.CHANGE_AUTHOR,
+            credentialsId: 'github-token')
     }
 
     withKubicEnvironment(

@@ -4,7 +4,7 @@ def targetBranch = env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME)
 def pullNumber = env.getEnvironment().get('CHANGE_ID', null)
 def libraryVersion = (pullNumber == null) ? targetBranch : "origin/pr/$CHANGE_ID"
 
-library "kubic-jenkins-library@${libraryVersion}"
+library "kubic-jenkins-library-test@${libraryVersion}"
 
 printEnv()
 coreKubicProjectCi()
