@@ -15,6 +15,7 @@ def call(Map parameters = [:]) {
     echo "Starting GitHub Collaborator Check"
 
     String org = parameters.get('org')
+    String repo = parameters.get('repo')
     String user = parameters.get('user')
     String credentialsId = parameters.get('credentialsId')
 
@@ -25,7 +26,7 @@ def call(Map parameters = [:]) {
     // outside collaborators fork / pull request.
     stage('Collaborator Check') {
         def membersResponse = httpRequest(
-            url: "https://api.github.com/orgs/${org}/members/${user}",
+            url: "https://api.github.com/repos/${org}/${repo}/collaborators/${user}",
             authentication: credentialsId,
             validResponseCodes: "204:404")
 
