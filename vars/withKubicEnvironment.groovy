@@ -16,6 +16,7 @@ import com.suse.kubic.Environment
 def call(Map parameters = [:], Closure body) {
     def nodeLabel = parameters.get('nodeLabel', 'devel')
     def environmentType = parameters.get('environmentType', 'caasp-kvm')
+    def openstackImage = parameters.get('openstackImage')
     def gitBase = parameters.get('gitBase')
     def gitBranch = parameters.get('gitBranch')
     def gitCredentialsId = parameters.get('gitCredentialsId')
@@ -50,7 +51,12 @@ def call(Map parameters = [:], Closure body) {
         try {
             // Create the Kubic environment
             stage('Create Environment') {
-                environment = createEnvironment(type: environmentType, masterCount: masterCount, workerCount: workerCount)
+                environment = createEnvironment(
+                    type: environmentType,
+                    masterCount: masterCount,
+                    workerCount: workerCount,
+                    openstackImage: openstackImage
+                )
             }
 
             // Bootstrap the Kubic environment

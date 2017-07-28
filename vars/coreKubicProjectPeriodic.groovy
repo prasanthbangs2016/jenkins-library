@@ -13,6 +13,7 @@
 // limitations under the License.
 def call(Map parameters = [:], Closure body = null) {
     String environmentType = parameters.get('environmentType', 'caasp-kvm')
+    String openstackImage = parameters.get('openstackImage')
     int masterCount = parameters.get('masterCount', 1)
     int workerCount = parameters.get('workerCount', 2)
 
@@ -22,6 +23,7 @@ def call(Map parameters = [:], Closure body = null) {
     withKubicEnvironment(
             nodeLabel: 'leap42.2&&m1.xxlarge',
             environmentType: environmentType,
+            openstackImage: openstackImage,
             gitBase: 'https://github.com/kubic-project',
             gitBranch: env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME),
             gitCredentialsId: 'github-token',
