@@ -19,6 +19,7 @@ def call(Map parameters = [:], Closure body = null) {
     // TODO: Make this an OpenStack based deploy with 50+ nodes.
     withKubicEnvironment(
             nodeLabel: 'leap42.2&&m1.xlarge',
+            environmentType: 'devenv',
             gitBase: 'https://github.com/kubic-project',
             gitBranch: env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME),
             gitCredentialsId: 'github-token',
