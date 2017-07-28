@@ -12,7 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 def call(Map parameters = [:]) {
-    int minionCount = parameters.get('minionCount')
+    int masterCount = parameters.get('masterCount')
+    int workerCount = parameters.get('workerCount')
+
+    int minionCount = masterCount + workerCount;
+
+    if (masterCount != 1) {
+        error('Multiple masters are not supported on a devenv environment')
+    }
 
     timeout(60) {
         parallel 'caasp-devenv': {
