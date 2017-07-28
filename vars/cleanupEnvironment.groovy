@@ -14,11 +14,12 @@
 
 Environment call(Map parameters = [:]) {
     String type = parameters.get('type', 'devenv')
-    int minionCount = parameters.get('minionCount')
+    int masterCount = parameters.get('masterCount')
+    int workerCount = parameters.get('workerCount')
 
     switch (type) {
         case 'devenv':
-            return cleanupEnvironmentDevenv(minionCount: minionCount)
+            return cleanupEnvironmentDevenv(masterCount: masterCount, workerCount: workerCount)
         default:
             error("Unknown environment type: ${type}")
     }

@@ -16,7 +16,14 @@ import com.suse.kubic.Minion
 import groovy.json.JsonBuilder
 
 Environment call(Map parameters = [:]) {
-    int minionCount = parameters.get('minionCount')
+    int masterCount = parameters.get('masterCount')
+    int workerCount = parameters.get('workerCount')
+
+    int minionCount = masterCount + workerCount;
+
+    if (masterCount != 1) {
+        error('Multiple masters are not supported on a devenv environment')
+    }
 
     Environment environment = new Environment()
 
