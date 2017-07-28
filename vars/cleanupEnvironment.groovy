@@ -11,39 +11,15 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-def call(Map parameters = [:]) {
+
+Environment call(Map parameters = [:]) {
+    String type = parameters.get('type', 'devenv')
     int minionCount = parameters.get('minionCount')
 
-    timeout(60) {
-        parallel 'caasp-devenv': {
-            sh(script: 'killall -9 kubelet || :')
-
-            dir('caasp-devenv') {
-                sh(script: 'set -o pipefail; ./cleanup --non-interactive 2>&1 | tee ${WORKSPACE}/logs/caasp-devenv-cleanup.log')
-            }
-
-            sh(script: 'docker kill $(docker ps -a -q) 2>&1 | tee ${WORKSPACE}/logs/docker-cleanup.log')
-            sh(script: 'docker rm $(docker ps -a -q) 2>&1 | tee -a ${WORKSPACE}/logs/docker-cleanup.log')
-            sh(script: 'docker rmi --no-prune sles12/velum:0.0 2>&1 | tee -a ${WORKSPACE}/logs/docker-cleanup.log')
-            sh(script: 'docker rmi --no-prune sles12/velum:development 2>&1 | tee -a ${WORKSPACE}/logs/docker-cleanup.log')
-            sh(script: 'docker rmi --no-prune $(docker images -q) 2>&1 | tee -a ${WORKSPACE}/logs/docker-cleanup.log')
-        },
-        'terraform': {
-            dir('terraform') {
-                withEnv([
-                    "MINIONS_SIZE=${minionCount}",
-                    "SKIP_DASHBOARD=true",
-                    "PREFIX=jenkins",
-                    "FORCE=true",
-                    "WGET_FLAGS=--no-verbose",
-                    "NO_COLOR=true",
-                    "STAGING=devel",
-                ]) {
-                    ansiColor('xterm') {
-                        sh(script: 'set -o pipefail; ./contrib/libvirt/k8s-libvirt.sh destroy 2>&1 | tee ${WORKSPACE}/logs/terraform-destroy.log')
-                    }
-                }
-            }
-        }
+    switch (type) {
+        case 'devenv':
+            return cleanupEnvironmentDevenv(minionCount: minionCount)
+        default:
+            error("Unknown environment type: ${type}")
     }
 }

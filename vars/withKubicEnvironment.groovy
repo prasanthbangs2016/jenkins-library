@@ -15,6 +15,7 @@ import com.suse.kubic.Environment
 
 def call(Map parameters = [:], Closure body) {
     def nodeLabel = parameters.get('nodeLabel', 'devel')
+    def environmentType = parameters.get('environmentType', 'devenv')
     def gitBase = parameters.get('gitBase')
     def gitBranch = parameters.get('gitBranch')
     def gitCredentialsId = parameters.get('gitCredentialsId')
@@ -48,7 +49,7 @@ def call(Map parameters = [:], Closure body) {
         try {
             // Create the Kubic environment
             stage('Create Environment') {
-                environment = createEnvironment(minionCount: minionCount)
+                environment = createEnvironment(type: environmentType, minionCount: minionCount)
             }
 
             // Bootstrap the Kubic environment
@@ -78,7 +79,7 @@ def call(Map parameters = [:], Closure body) {
             // Destroy the Kubic Environment
             stage('Destroy Environment') {
                 try {
-                    cleanupEnvironment(minionCount: minionCount)
+                    cleanupEnvironment(type: environmentType, minionCount: minionCount)
                 } catch (Exception exc) {
                     // TODO: Figure out if we can mark this stage as failed, while allowing the remaining stages to proceed.
                     echo "Failed to Destroy Environment"
