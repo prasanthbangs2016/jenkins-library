@@ -26,16 +26,24 @@ def call(Map parameters = [:]) {
             credentialsId: 'github-token')
     }
 
-    withKubicEnvironment(
-            nodeLabel: 'leap42.2&&m1.xlarge',
-            gitBase: 'https://github.com/kubic-project',
-            gitBranch: env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME),
-            gitCredentialsId: 'github-token',
-            minionCount: minionCount) {
 
-        stage('Run Tests') {
-            // TODO: Add some cluster tests, e.g. booting pods, checking they work, etc
-            runTestInfra(environment: environment)
-        }
-    }
+
+    githubFindDependancies(
+        org: 'kubic-project',
+        repo: env.JOB_NAME.split('/')[0],
+        num: env.CHANGE_ID.toInteger(),
+        credentialsId: 'github-token')
+
+    // withKubicEnvironment(
+    //         nodeLabel: 'leap42.2&&m1.xlarge',
+    //         gitBase: 'https://github.com/kubic-project',
+    //         gitBranch: env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME),
+    //         gitCredentialsId: 'github-token',
+    //         minionCount: minionCount) {
+
+    //     stage('Run Tests') {
+    //         // TODO: Add some cluster tests, e.g. booting pods, checking they work, etc
+    //         runTestInfra(environment: environment)
+    //     }
+    // }
 }
