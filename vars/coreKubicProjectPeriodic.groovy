@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 def call(Map parameters = [:], Closure body = null) {
+    String environmentType = parameters.get('environmentType', 'devenv')
     int masterCount = parameters.get('masterCount', 1)
     int workerCount = parameters.get('workerCount', 2)
 
@@ -20,7 +21,7 @@ def call(Map parameters = [:], Closure body = null) {
     // TODO: Make this an OpenStack based deploy with 50+ nodes.
     withKubicEnvironment(
             nodeLabel: 'leap42.2&&m1.xlarge',
-            environmentType: 'devenv',
+            environmentType: environmentType,
             gitBase: 'https://github.com/kubic-project',
             gitBranch: env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME),
             gitCredentialsId: 'github-token',
