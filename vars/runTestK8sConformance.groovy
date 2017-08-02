@@ -39,10 +39,8 @@ def call(Map parameters = [:]) {
 
         try {
             timeout(2 * 60 * 60) {
-                withEnv(["DOCKER_RUN_ARGS=-i",]) {
-                    ansiColor {
-                        sh "./e2e-tests --url https://${environment.kubernetesHost}:6443/ --ca-crt ${ca_crt} --admin-key ${admin_key} --admin-crt ${admin_crt} --artifacts report --log ${WORKSPACE}/logs/e2e-tests.log"
-                    }
+                ansiColor {
+                    sh "./e2e-tests --no-tty --url https://${environment.kubernetesHost}:6443/ --ca-crt ${ca_crt} --admin-key ${admin_key} --admin-crt ${admin_crt} --artifacts report --log ${WORKSPACE}/logs/e2e-tests.log"
                 }
             }
         } finally {
