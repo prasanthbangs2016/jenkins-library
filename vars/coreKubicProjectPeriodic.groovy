@@ -12,17 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 def call(Map parameters = [:], Closure body = null) {
-    int minionCount = parameters.get('minionCount', 3)
+    int masterCount = parameters.get('masterCount', 1)
+    int workerCount = parameters.get('workerCount', 2)
 
     echo "Starting Kubic core project periodic"
 
     // TODO: Make this an OpenStack based deploy with 50+ nodes.
     withKubicEnvironment(
             nodeLabel: 'leap42.2&&m1.xlarge',
+            environmentType: 'devenv',
             gitBase: 'https://github.com/kubic-project',
             gitBranch: env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME),
             gitCredentialsId: 'github-token',
-            minionCount: minionCount) {
+            masterCount: masterCount,
+            workerCount: workerCount) {
 
         stage('Run Basic Tests') {
             // TODO: Add some cluster tests, e.g. booting pods, checking they work, etc

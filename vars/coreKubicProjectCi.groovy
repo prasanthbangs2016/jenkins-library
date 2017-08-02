@@ -14,7 +14,8 @@
 def call(Map parameters = [:]) {
     echo "Starting Kubic core project CI"
 
-    int minionCount = parameters.get('minionCount', 3)
+    int masterCount = parameters.get('masterCount', 1)
+    int workerCount = parameters.get('workerCount', 2)
 
     if (env.CHANGE_AUTHOR != null) {
         // TODO: Don't hardcode salt repo name, find the right place
@@ -28,10 +29,12 @@ def call(Map parameters = [:]) {
 
     withKubicEnvironment(
             nodeLabel: 'leap42.2&&m1.xlarge',
+            environmentType: 'devenv',
             gitBase: 'https://github.com/kubic-project',
             gitBranch: env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME),
             gitCredentialsId: 'github-token',
-            minionCount: minionCount) {
+            masterCount: masterCount,
+            workerCount: workerCount) {
 
         stage('Run Tests') {
             // TODO: Add some cluster tests, e.g. booting pods, checking they work, etc
