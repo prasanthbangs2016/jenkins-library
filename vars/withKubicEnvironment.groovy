@@ -36,7 +36,7 @@ def call(Map parameters = [:], Closure body) {
 
         // Basic prep steps
         stage('Preparation') {
-            step([$class: 'WsCleanup'])
+            cleanWs()
             sh(script: 'mkdir logs')
         }
 

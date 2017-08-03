@@ -35,7 +35,7 @@ def call(Map parameters = [:]) {
 
         } else {
             def allowExecution = input(id: 'userInput', message: "Change author is not a ${org} member: ${user}", parameters: [
-                [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Run tests anyway?', name: 'allowExecution']
+                booleanParam(name: 'allowExecution', defaultValue: false, description: 'Run tests anyway?')
             ])
 
             if (!allowExecution) {
