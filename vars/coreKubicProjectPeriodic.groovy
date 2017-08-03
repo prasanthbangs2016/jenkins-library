@@ -30,9 +30,7 @@ def call(Map parameters = [:], Closure body = null) {
 
         stage('Run Basic Tests') {
             // TODO: Add some cluster tests, e.g. booting pods, checking they work, etc
-            parallel 'testinfra': {
-                runTestInfra(environment: environment)
-            }
+            runTestInfra(environment: environment)
         }
 
         if (body != null) {
