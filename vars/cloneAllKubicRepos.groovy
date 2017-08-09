@@ -35,9 +35,6 @@ def call(Map parameters = [:]) {
         'terraform': {
             cloneKubicRepo(gitBase: gitBase, branch: branch, credentialsId: credentialsId, repo: "terraform")
         },
-        'testinfra': {
-            cloneKubicRepo(gitBase: gitBase, branch: branch, credentialsId: credentialsId, repo: "testinfra")
-        },
         'automation': {
             cloneKubicRepo(gitBase: gitBase, branch: branch, credentialsId: credentialsId, repo: "automation")
         }
