@@ -58,6 +58,7 @@ Environment call(Map parameters = [:]) {
                 ]) {
                     ansiColor('xterm') {
                         sh(script: 'set -o pipefail; ./contrib/libvirt/k8s-libvirt.sh apply 2>&1 | tee ${WORKSPACE}/logs/terraform-apply.log')
+                        sh(script: 'set -o pipefail; ../automation/misc-tools/generate-ssh-config environment.json')
                     }
                 }
 
