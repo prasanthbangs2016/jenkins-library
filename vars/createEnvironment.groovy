@@ -13,13 +13,13 @@
 // limitations under the License.
 
 Environment call(Map parameters = [:]) {
-    String type = parameters.get('type', 'devenv')
+    String type = parameters.get('type', 'caasp-kvm')
     int masterCount = parameters.get('masterCount')
     int workerCount = parameters.get('workerCount')
 
     switch (type) {
-        case 'devenv':
-            return createEnvironmentDevenv(masterCount: masterCount, workerCount: workerCount)
+        case 'caasp-kvm':
+            return createEnvironmentCaaspKvm(masterCount: masterCount, workerCount: workerCount)
         default:
             error("Unknown environment type: ${type}")
     }
