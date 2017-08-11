@@ -74,11 +74,13 @@ Environment call(Map parameters = [:]) {
                 tfEnvironment.minions.each { tfMinion ->
                     Minion minion = new Minion()
 
-                    minion.id = tfMinion.id
+                    minion.index = tfMinion.index != null ? tfMinion.index : tfMinion.id
                     minion.fqdn = tfMinion.fqdn
                     minion.role = tfMinion.role
-                    minion.ipv4 = tfMinion.ipv4
                     minion.minionId = tfMinion.minionId != null ? tfMinion.minionId : tfMinion.minionID
+                    minion.proxyCommand = tfMinion.proxyCommand
+                    minion.addresses.publicIpv4 = tfMinion.addresses.publicIpv4
+                    minion.addresses.privateIpv4 = tfMinion.addresses.privateIpv4
 
                     environment.minions.push(minion)
                 }
