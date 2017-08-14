@@ -41,8 +41,9 @@ Environment call(Map parameters = [:]) {
                 junit "velum-bootstrap.xml"
                 try {
                     archiveArtifacts(artifacts: "screenshots/**")
+                    archiveArtifacts(artifacts: "kubeconfig")
                 } catch (Exception exc) {
-                    echo "Failed to Archive Screenshots"
+                    echo "Failed to Archive Artifacts"
                 }
             }
         }
