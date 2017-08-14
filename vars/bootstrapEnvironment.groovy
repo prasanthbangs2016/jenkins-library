@@ -31,7 +31,7 @@ Environment call(Map parameters = [:]) {
                     "VERBOSE=true",
                     "ENVIRONMENT=${WORKSPACE}/environment.json",
                 ]) {
-                    sh(script: "bundle exec rspec --format RspecJunitFormatter --out velum-bootstrap.xml spec/**/*")
+                    sh(script: "bundle exec rspec --format documentation --format RspecJunitFormatter --out velum-bootstrap.xml spec/**/*")
                 }
             }
         } finally {
