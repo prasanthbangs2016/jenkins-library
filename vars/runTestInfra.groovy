@@ -20,7 +20,7 @@ def call(Map parameters = [:]) {
         createPythonVenv(name: "testinfra")
         inPythonVenv(name: "testinfra", script:"pip install -r requirements.txt")
         environment.minions.each { minion ->
-            inPythonVenv(name:"testinfra", script:"pytest --ssh-config=${WORKSPACE}/automation/misc-tools/environment.ssh_config --sudo --hosts=${minion.fqdn} -m \"${minion.role} or common\" --junit-xml ${minion.role}-${minion.id}.xml -v | tee -a ${env.WORKSPACE}/logs/testinfra.log")
+            inPythonVenv(name:"testinfra", script:"pytest --ssh-config=${WORKSPACE}/automation/misc-tools/environment.ssh_config --sudo --hosts=${minion.fqdn} -m \"${minion.role} or common\" --junit-xml ${minion.role}-${minion.index}.xml -v | tee -a ${env.WORKSPACE}/logs/testinfra.log")
         }
         junit '*.xml'
     }

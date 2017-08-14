@@ -1,9 +1,10 @@
 package com.suse.kubic;
 
 class Minion implements Serializable {
-	String id;
+	String index;
 	String fqdn;
 	String role;
-	String ipv4;
 	String minionId;
+	String proxyCommand;
+	Addresses addresses = new Addresses();
 }
