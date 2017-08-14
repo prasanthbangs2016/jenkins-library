@@ -33,7 +33,7 @@ Environment call(Map parameters = [:]) {
                     // TODO: drop this after switching to a VM based admin setup
                     "DEVENV=true",
                 ]) {
-                    sh(script: "bundle exec rspec --format RspecJunitFormatter --out velum-bootstrap.xml spec/**/*")
+                    sh(script: "bundle exec rspec --format documentation --format RspecJunitFormatter --out velum-bootstrap.xml spec/**/*")
                 }
             }
         } finally {
