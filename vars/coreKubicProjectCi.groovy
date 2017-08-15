@@ -27,6 +27,12 @@ def call(Map parameters = [:]) {
             credentialsId: 'github-token')
     }
 
+    // Configure the job properties
+    properties([
+        buildDiscarder(logRotator(numToKeepStr: '15')),
+        disableConcurrentBuilds(),
+    ])
+
     withKubicEnvironment(
             nodeLabel: 'leap42.2&&m1.xxlarge',
             environmentType: 'caasp-kvm',
