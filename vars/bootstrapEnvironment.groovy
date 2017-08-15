@@ -29,9 +29,7 @@ Environment call(Map parameters = [:]) {
             dir('automation/velum-bootstrap') {
                 withEnv([
                     "VERBOSE=true",
-                    "ENVIRONMENT=${WORKSPACE}/terraform/environment.json",
-                    // TODO: drop this after switching to a VM based admin setup
-                    "DEVENV=true",
+                    "ENVIRONMENT=${WORKSPACE}/environment.json",
                 ]) {
                     sh(script: "bundle exec rspec --format RspecJunitFormatter --out velum-bootstrap.xml spec/**/*")
                 }

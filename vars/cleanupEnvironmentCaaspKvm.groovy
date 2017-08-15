@@ -11,16 +11,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-Environment call(Map parameters = [:]) {
-    String type = parameters.get('type', 'caasp-kvm')
-    int masterCount = parameters.get('masterCount')
-    int workerCount = parameters.get('workerCount')
-
-    switch (type) {
-        case 'caasp-kvm':
-            return cleanupEnvironmentCaaspKvm(masterCount: masterCount, workerCount: workerCount)
-        default:
-            error("Unknown environment type: ${type}")
+def call(Map parameters = [:]) {
+    timeout(60) {
+        dir('automation/caasp-kvm') {
+            ansiColor('xterm') {
+                sh(script: 'set -o pipefail; ./caasp-kvm --destroy  2>&1 | tee ${WORKSPACE}/logs/caasp-kvm-destroy.log')
+            }
+        }
     }
 }
