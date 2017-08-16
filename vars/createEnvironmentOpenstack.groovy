@@ -30,7 +30,7 @@ Environment call(Map parameters = [:]) {
             String stackName = "${JOB_NAME}-${BUILD_NUMBER}".replace("/", "-")
 
             withCredentials([file(credentialsId: 'prvcld-openrc-caasp-ci-tests', variable: 'OPENRC')]) {
-                if (image == null) {
+                if (image == null || image == '') {
                     // Find the latest Devel image if we've not been given a specific image
                     image = sh(script: "set -o pipefail; set +x; source $OPENRC; openstack image list --property caasp-project='Devel:CASP:1.0:ControllerNode' -c Name -f value | sort -r -V | head -n1 | tr -d \"\n\"", returnStdout: true)
                 }
