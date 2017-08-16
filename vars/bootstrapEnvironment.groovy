@@ -32,6 +32,7 @@ Environment call(Map parameters = [:]) {
                     "ENVIRONMENT=${WORKSPACE}/environment.json",
                 ]) {
                     sh(script: "bundle exec rspec --format documentation --format RspecJunitFormatter --out velum-bootstrap.xml spec/**/*")
+                    sh(script: "cp kubeconfig ${WORKSPACE}/kubeconfig")
                 }
             }
         } finally {
