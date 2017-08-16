@@ -23,10 +23,12 @@ def call(Map parameters = [:]) {
             "ENVIRONMENT_JSON=${WORKSPACE}/environment.json"
         ]) {
             environment.minions.each { minion ->
-                sh("set -o pipefail; tox -e ${minion.role} -- --hosts ${minion.fqdn} --junit-xml ${minion.role}-${minion.index}.xml -v | tee -a ${WORKSPACE}/logs/testinfra.log")
+                try {
+                    sh("set -o pipefail; tox -e ${minion.role} -- --hosts ${minion.fqdn} --junit-xml ${minion.role}-${minion.index}.xml -v | tee -a ${WORKSPACE}/logs/testinfra.log")
+                } finally {
+                    junit "${minion.role}-${minion.index}.xml"
+                }
             }
-
-            junit '*.xml'
         }
     }
 }
