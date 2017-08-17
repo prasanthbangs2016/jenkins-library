@@ -22,7 +22,7 @@ def call(Map parameters = [:], Closure body = null) {
     try {
         // TODO: Make this an OpenStack based deploy with 50+ nodes.
         withKubicEnvironment(
-                nodeLabel: 'leap42.2&&m1.xxlarge',
+                nodeLabel: 'leap42.3&&m1.xxlarge',
                 environmentType: environmentType,
                 openstackImage: openstackImage,
                 gitBase: 'https://github.com/kubic-project',
