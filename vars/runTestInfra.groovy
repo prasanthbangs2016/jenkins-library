@@ -17,16 +17,57 @@ def call(Map parameters = [:]) {
     Environment environment = parameters.get('environment')
 
     dir("automation/testinfra") {
-        // TODO: Use a parallel for each role, and run tox once per role with the group of minions.
+        def admins = []
+        def masters = []
+        def workers = []
+
+        environment.minions.each { minion ->
+            if (minion.role == 'admin') {
+                admins.add(minion.fqdn)
+            } else if (minion.role == 'master') {
+                masters.add(minion.fqdn)
+            } else if (minion.role == 'worker') {
+                workers.add(minion.fqdn)
+            } else {
+                error(message: "Unknown role: " + minion.role)
+            }
+        }
+
         withEnv([
             "SSH_CONFIG=${WORKSPACE}/automation/misc-tools/environment.ssh_config",
             "ENVIRONMENT_JSON=${WORKSPACE}/environment.json"
         ]) {
-            environment.minions.each { minion ->
+            parallel 'admin': {
+                lock('venv-setup') {
+                    sh("set -o pipefail; tox -e admin --notest")
+                }
+
                 try {
-                    sh("set -o pipefail; tox -e ${minion.role} -- --hosts ${minion.fqdn} --junit-xml ${minion.role}-${minion.index}.xml -v | tee -a ${WORKSPACE}/logs/testinfra.log")
+                    sh("set -o pipefail; tox -e admin -- --hosts ${admins.join(",")} --junit-xml admin.xml -v | tee -a ${WORKSPACE}/logs/testinfra-admin.log")
                 } finally {
-                    junit "${minion.role}-${minion.index}.xml"
+                    junit "admin.xml"
+                }
+            },
+            'master': {
+                lock('venv-setup') {
+                    sh("set -o pipefail; tox -e admin --notest")
+                }
+
+                try {
+                    sh("set -o pipefail; tox -e master -- --hosts ${masters.join(",")} --junit-xml master.xml -v | tee -a ${WORKSPACE}/logs/testinfra-master.log")
+                } finally {
+                    junit "master.xml"
+                }
+            },
+            'worker': {
+                lock('venv-setup') {
+                    sh("set -o pipefail; tox -e admin --notest")
+                }
+
+                try {
+                    sh("set -o pipefail; tox -e worker -- --hosts ${workers.join(",")} --junit-xml worker.xml -v | tee -a ${WORKSPACE}/logs/testinfra-worker.log")
+                } finally {
+                    junit "worker.xml"
                 }
             }
         }
