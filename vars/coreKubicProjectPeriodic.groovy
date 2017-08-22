@@ -14,7 +14,7 @@
 def call(Map parameters = [:], Closure body = null) {
     String environmentType = parameters.get('environmentType', 'caasp-kvm')
     String openstackImage = parameters.get('openstackImage')
-    int masterCount = parameters.get('masterCount', 1)
+    int masterCount = parameters.get('masterCount', 3)
     int workerCount = parameters.get('workerCount', 2)
 
     echo "Starting Kubic core project periodic"

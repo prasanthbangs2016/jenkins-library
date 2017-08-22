@@ -14,7 +14,7 @@
 def call(Map parameters = [:]) {
     echo "Starting Kubic core project CI"
 
-    int masterCount = parameters.get('masterCount', 1)
+    int masterCount = parameters.get('masterCount', 3)
     int workerCount = parameters.get('workerCount', 2)
 
     if (env.CHANGE_AUTHOR != null) {
