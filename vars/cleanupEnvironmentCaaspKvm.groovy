@@ -11,17 +11,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 def call(Map parameters = [:]) {
-    dir("${WORKSPACE}/automation/k8s-e2e-tests") {
-        try {
-            timeout(2 * 60 * 60) {
-                ansiColor {
-                    sh(script: "./e2e-tests --no-tty --kubeconfig ${WORKSPACE}/kubeconfig --artifacts report --log ${WORKSPACE}/logs/k8s-e2e-tests.log")
-                }
+    timeout(60) {
+        dir('automation/caasp-kvm') {
+            ansiColor('xterm') {
+                sh(script: 'set -o pipefail; ./caasp-kvm --destroy  2>&1 | tee ${WORKSPACE}/logs/caasp-kvm-destroy.log')
             }
-        } finally {
-            junit("report/*.xml")
         }
     }
 }

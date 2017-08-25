@@ -20,8 +20,8 @@ def call(Map parameters = [:]) {
     echo 'Cloning all Kubic Repos'
 
     timeout(5) {
-        parallel 'caasp-devenv': {
-            cloneKubicRepo(gitBase: gitBase, branch: branch, credentialsId: credentialsId, repo: "caasp-devenv")
+        parallel 'automation': {
+            cloneKubicRepo(gitBase: gitBase, branch: branch, credentialsId: credentialsId, repo: "automation")
         },
         'salt': {
             cloneKubicRepo(gitBase: gitBase, branch: branch, credentialsId: credentialsId, repo: "salt")
@@ -31,12 +31,6 @@ def call(Map parameters = [:]) {
         },
         'caasp-container-manifests': {
             cloneKubicRepo(gitBase: gitBase, branch: branch, credentialsId: credentialsId, repo: "caasp-container-manifests")
-        },
-        'terraform': {
-            cloneKubicRepo(gitBase: gitBase, branch: branch, credentialsId: credentialsId, repo: "terraform")
-        },
-        'automation': {
-            cloneKubicRepo(gitBase: gitBase, branch: branch, credentialsId: credentialsId, repo: "automation")
         }
     }
 }

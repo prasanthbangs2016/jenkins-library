@@ -11,17 +11,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 def call(Map parameters = [:]) {
-    dir("${WORKSPACE}/automation/k8s-e2e-tests") {
-        try {
-            timeout(2 * 60 * 60) {
-                ansiColor {
-                    sh(script: "./e2e-tests --no-tty --kubeconfig ${WORKSPACE}/kubeconfig --artifacts report --log ${WORKSPACE}/logs/k8s-e2e-tests.log")
-                }
+    timeout(30) {
+        dir('automation/caasp-openstack-heat') {
+            withCredentials([file(credentialsId: 'prvcld-openrc-caasp-ci-tests', variable: 'OPENRC')]) {
+                sh(script: "set -o pipefail; ./caasp-openstack --openrc ${OPENRC} -d 2>&1 | tee ${WORKSPACE}/logs/caasp-openstack-heat-destroy.log")
             }
-        } finally {
-            junit("report/*.xml")
         }
     }
 }

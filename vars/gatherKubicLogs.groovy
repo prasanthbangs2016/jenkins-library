@@ -25,26 +25,16 @@ def call(Map parameters = [:]) {
     // "Short" logs you care about most should be piped through tee, while long or rarely used logs should
     // go straight to a file.
 
-    timeout(10) {
+    timeout(30) {
         parallel 'admin': {
-            // TODO: Move these somewhere else outside of the job config?
-            sh(script: 'set -o pipefail; docker ps -a 2>&1 | tee ${WORKSPACE}/logs/docker-ps.log', returnStatus: true)
-            
-            dir("${WORKSPACE}/logs/admin-docker-inspect") {
-                sh(script: 'set -o pipefail; for i in $(docker ps -a -q); do NAME=$(docker ps -a --format "table {{.ID}} {{.Names}}" | grep $i | awk "{print \\$2}"); docker inspect $i &> $NAME.log; done', returnStatus: true)
+            // TODO.. We should do all minions in parallel, we can generate that, but no
+            // need to do it right this second. Produces /var/log/nts_*.tbz.
+            environment.minions.each { minion ->
+                if (minion.role == "admin") {
+                    shOnMinion(minion: minion, script: "supportconfig -b")
+                    scpFromMinion(minion: minion, source: "/var/log/nts_*.tbz", destination: "${WORKSPACE}/logs/")
+                }
             }
-
-            dir("${WORKSPACE}/logs/admin-docker-logs") {
-                sh(script: 'set -o pipefail; for i in $(docker ps -a -q); do NAME=$(docker ps -a --format "table {{.ID}} {{.Names}}" | grep $i | awk "{print \\$2}"); docker logs $i &> $NAME.log; done', returnStatus: true)
-            }
-
-            dir("${WORKSPACE}/logs/manifests") {
-                sh(script: 'cp ${WORKSPACE}/caasp-devenv/manifests/* .', returnStatus: true)
-            }
-
-            sh(script: 'set -o pipefail; docker exec -i $(docker ps | grep velum-dashboard | awk \'{print $1}\') entrypoint.sh bundle exec rails runner \'puts(Pillar.all.to_yaml)\' &> ${WORKSPACE}/logs/velum-pillar.yaml', returnStatus: true)
-            sh(script: 'set -o pipefail; docker exec -i $(docker ps | grep velum-dashboard | awk \'{print $1}\') entrypoint.sh bundle exec rails runner \'puts(Minion.all.to_yaml)\' &> ${WORKSPACE}/logs/velum-minions.yaml', returnStatus: true)
-            sh(script: 'set -o pipefail; docker exec -i $(docker ps | grep velum-dashboard | awk \'{print $1}\') entrypoint.sh bundle exec rails runner \'puts(SaltEvent.all.map(&:parsed_data).to_yaml)\' &> ${WORKSPACE}/logs/velum-salt-events.yaml', returnStatus: true)
         },
         'master': {
             // TODO.. We should do all minions in parallel, we can generate that, but no

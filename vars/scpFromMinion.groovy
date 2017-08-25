@@ -17,9 +17,10 @@ def call(Map parameters = [:]) {
     Minion minion = parameters.get('minion')
     String source = parameters.get('source')
     String destination = parameters.get('destination')
+    boolean returnStatus = parameters.get('returnStatus', false)
+    boolean returnStdout = parameters.get('returnStdout', false)
 
-    // TODO: Probably shouldn't hardcode the key here
     // TODO: returnStatus won't work right now as SSH considers it's job done
     // sucessfully when the command is ran remotely, even if it fails.
-    sh(script: "scp -o StrictHostKeyChecking=no -i ${WORKSPACE}/terraform/ssh/id_docker root@${minion.ipv4}:${source} ${destination}")
+    return sh(script: "scp -F ${WORKSPACE}/automation/misc-tools/environment.ssh_config ${minion.fqdn}:${source} ${destination}", returnStatus: returnStatus, returnStdout: returnStdout)
 }
