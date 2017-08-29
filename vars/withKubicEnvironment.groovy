@@ -14,7 +14,7 @@
 import com.suse.kubic.Environment
 
 def call(Map parameters = [:], Closure body) {
-    def nodeLabel = parameters.get('nodeLabel', 'devel')
+    def nodeLabel = parameters.get('nodeLabel', 'leap42.3&&m1.xxlarge')
     def environmentType = parameters.get('environmentType', 'caasp-kvm')
     def openstackImage = parameters.get('openstackImage')
     def gitBase = parameters.get('gitBase')
