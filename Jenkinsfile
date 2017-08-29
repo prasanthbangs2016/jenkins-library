@@ -6,5 +6,4 @@ def libraryVersion = (pullNumber == null) ? targetBranch : "origin/pr/$CHANGE_ID
 
 library "kubic-jenkins-library-test@${libraryVersion}"
 
-printEnv()
 coreKubicProjectCi()
