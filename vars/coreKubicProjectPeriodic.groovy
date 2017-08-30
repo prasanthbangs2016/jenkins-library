@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 def call(Map parameters = [:], Closure body = null) {
+    String nodeLabel = parameters.get('nodeLabel', 'leap42.3&&m1.xxlarge')
     String environmentType = parameters.get('environmentType', 'caasp-kvm')
     String openstackImage = parameters.get('openstackImage')
     int masterCount = parameters.get('masterCount', 3)
@@ -22,7 +23,7 @@ def call(Map parameters = [:], Closure body = null) {
     try {
         // TODO: Make this an OpenStack based deploy with 50+ nodes.
         withKubicEnvironment(
-                nodeLabel: 'leap42.3&&m1.xxlarge',
+                nodeLabel: nodeLabel,
                 environmentType: environmentType,
                 openstackImage: openstackImage,
                 gitBase: 'https://github.com/kubic-project',
