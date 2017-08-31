@@ -11,11 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-def call(Map parameters = [:]) {
+def call() {
     echo "Starting Kubic core project CI"
-
-    int masterCount = parameters.get('masterCount', 3)
-    int workerCount = parameters.get('workerCount', 2)
 
     if (env.CHANGE_AUTHOR != null) {
         // TODO: Don't hardcode salt repo name, find the right place
@@ -39,8 +36,8 @@ def call(Map parameters = [:]) {
             gitBase: 'https://github.com/kubic-project',
             gitBranch: env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME),
             gitCredentialsId: 'github-token',
-            masterCount: masterCount,
-            workerCount: workerCount) {
+            masterCount: 3,
+            workerCount: 2) {
 
         stage('Run Tests') {
             // TODO: Add some cluster tests, e.g. booting pods, checking they work, etc
