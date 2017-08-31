@@ -20,7 +20,7 @@ Environment call(Map parameters = [:]) {
 
     timeout(90) {
         dir('automation/velum-bootstrap') {
-            sh(script: 'bundle config build.nokogiri --use-system-libraries; bundle install')
+            sh(script: './velum-interactions --setup')
         }
     }
 
@@ -28,10 +28,9 @@ Environment call(Map parameters = [:]) {
         try {
             dir('automation/velum-bootstrap') {
                 withEnv([
-                    "VERBOSE=true",
                     "ENVIRONMENT=${WORKSPACE}/environment.json",
                 ]) {
-                    sh(script: "bundle exec rspec --format documentation --format RspecJunitFormatter --out velum-bootstrap.xml spec/**/*")
+                    sh(script: "./velum-interactions --configure --bootstrap")
                     sh(script: "cp kubeconfig ${WORKSPACE}/kubeconfig")
                 }
             }
