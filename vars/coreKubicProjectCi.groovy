@@ -43,5 +43,10 @@ def call() {
             // TODO: Add some cluster tests, e.g. booting pods, checking they work, etc
             runTestInfra(environment: environment)
         }
+
+        stage('Upgrade Environment') {
+            // Temp hack to run some upgrade steps
+            upgradeEnvironment(environment: environment, updateRepo: 'http://download.suse.de/ibs/SUSE/Updates/SUSE-CAASP/ALL/x86_64/update/SUSE:Updates:SUSE-CAASP:ALL:x86_64.repo')
+        }
     }
 }
