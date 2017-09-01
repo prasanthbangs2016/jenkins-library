@@ -25,39 +25,18 @@ def call(Map parameters = [:]) {
     // "Short" logs you care about most should be piped through tee, while long or rarely used logs should
     // go straight to a file.
 
-    timeout(30) {
-        parallel 'admin': {
-            // TODO.. We should do all minions in parallel, we can generate that, but no
-            // need to do it right this second. Produces /var/log/nts_*.tbz.
-            environment.minions.each { minion ->
-                if (minion.role == "admin") {
-                    shOnMinion(minion: minion, script: "supportconfig -b")
-                    scpFromMinion(minion: minion, source: "/var/log/nts_*.tbz", destination: "${WORKSPACE}/logs/")
-                }
-            }
-        },
-        'master': {
-            // TODO.. We should do all minions in parallel, we can generate that, but no
-            // need to do it right this second. Produces /var/log/nts_*.tbz.
-            environment.minions.each { minion ->
-                if (minion.role == "master") {
-                    shOnMinion(minion: minion, script: "supportconfig -b")
-                    scpFromMinion(minion: minion, source: "/var/log/nts_*.tbz", destination: "${WORKSPACE}/logs/")
-                }
-            }
-        },
-        'worker': {
-            // TODO.. We should do all minions in parallel, we can generate that, but no
-            // need to do it right this second. Produces /var/log/nts_*.tbz.
-            environment.minions.each { minion ->
-                if (minion.role == "worker") {
-                    shOnMinion(minion: minion, script: "supportconfig -b")
-                    scpFromMinion(minion: minion, source: "/var/log/nts_*.tbz", destination: "${WORKSPACE}/logs/")
-                }
-            }
-        },
-        'cluster': {
-            // TODO.. Connect to cluster and gather any logs
+    def parallelSteps = [:]
+
+    environment.minions.each { minion ->
+        def gatherLogs = {
+            shOnMinion(minion: minion, script: "supportconfig -b")
+            scpFromMinion(minion: minion, source: "/var/log/nts_*.tbz", destination: "${WORKSPACE}/logs/")
         }
+
+        parallelSteps.put("${minion.role}-${minion.index}", gatherLogs)
+    }
+
+    timeout(30) {
+        parallel(parallelSteps)
     }
 }
