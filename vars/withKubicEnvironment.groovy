@@ -59,6 +59,22 @@ def call(Map parameters = [:], Closure body) {
                 )
             }
 
+            // Configure the Kubic environment
+            stage('Configure Environment') {
+                configureEnvironment(environment: environment)
+            }
+
+            // Create Workers
+            stage('Create Environment Workers') {
+                environment = createEnvironmentWorkers(
+                    environment: environment,
+                    type: environmentType,
+                    masterCount: masterCount,
+                    workerCount: workerCount,
+                    openstackImage: openstackImage
+                )
+            }
+
             // Bootstrap the Kubic environment
             stage('Bootstrap Environment') {
                 bootstrapEnvironment(environment: environment)

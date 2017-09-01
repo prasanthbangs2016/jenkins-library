@@ -17,7 +17,7 @@ import com.suse.kubic.Environment
 Environment call(Map parameters = [:]) {
     Environment environment = parameters.get('environment')
 
-    // TODO: This and configureEnvironment share 90% of the same code
+    // TODO: This and bootstrapEnvironment share 90% of the same code
 
     timeout(90) {
         dir('automation/velum-bootstrap') {
@@ -31,8 +31,7 @@ Environment call(Map parameters = [:]) {
                 withEnv([
                     "ENVIRONMENT=${WORKSPACE}/environment.json",
                 ]) {
-                    sh(script: "./velum-interactions --bootstrap")
-                    sh(script: "cp kubeconfig ${WORKSPACE}/kubeconfig")
+                    sh(script: "./velum-interactions --configure")
                 }
             }
         } finally {
@@ -40,7 +39,6 @@ Environment call(Map parameters = [:]) {
                 junit "velum-bootstrap.xml"
                 try {
                     archiveArtifacts(artifacts: "screenshots/**")
-                    archiveArtifacts(artifacts: "kubeconfig")
                 } catch (Exception exc) {
                     echo "Failed to Archive Artifacts"
                 }
