@@ -23,6 +23,8 @@ Environment call(Map parameters = [:]) {
             return createEnvironmentCaaspKvm(masterCount: masterCount, workerCount: workerCount)
         case 'openstack':
             return createEnvironmentOpenstack(masterCount: masterCount, workerCount: workerCount, image: openstackImage)
+        case 'bare-metal':
+            return createEnvironmentCaaspBareMetal(masterCount: masterCount, workerCount: workerCount)
         default:
             error("Unknown environment type: ${type}")
     }
