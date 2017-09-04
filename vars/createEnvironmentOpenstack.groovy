@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import com.suse.kubic.Environment
-import com.suse.kubic.Minion
+
 
 Environment call(Map parameters = [:]) {
     int masterCount = parameters.get('masterCount')
@@ -23,7 +23,7 @@ Environment call(Map parameters = [:]) {
         error('Multiple masters are not supported on a openstack environment')
     }
 
-    Environment environment = new Environment()
+    Environment environment
 
     timeout(60) {
         dir('automation/caasp-openstack-heat') {
@@ -38,27 +38,7 @@ Environment call(Map parameters = [:]) {
             }
 
             // Read the generated environment file
-            def environmentJson = readJSON(file: 'environment.json')
-
-            // Fill out the dashboardHost and kubernetesHost
-            environment.dashboardHost = environmentJson.dashboardHost
-            environment.kubernetesHost = environmentJson.kubernetesHost
-            environment.sshUser = environmentJson.sshUser
-            environment.sshKey = environmentJson.sshKey
-
-            environmentJson.minions.each { tfMinion ->
-                Minion minion = new Minion()
-
-                minion.index = tfMinion.index
-                minion.fqdn = tfMinion.fqdn
-                minion.role = tfMinion.role
-                minion.minionId = tfMinion.minionId
-                minion.proxyCommand = tfMinion.proxyCommand
-                minion.addresses.publicIpv4 = tfMinion.addresses.publicIpv4
-                minion.addresses.privateIpv4 = tfMinion.addresses.privateIpv4
-
-                environment.minions.push(minion)
-            }
+            environment = new Environment(readJSON(file: 'environment.json'))
 
             sh(script: "cp environment.json ${WORKSPACE}/environment.json")
             sh(script: "cat ${WORKSPACE}/environment.json")
