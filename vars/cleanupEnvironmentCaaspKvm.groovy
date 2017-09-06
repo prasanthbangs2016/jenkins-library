@@ -12,10 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 def call(Map parameters = [:]) {
+    def proxyFlag = ""
+    if (env.hasProperty("http_proxy")) {
+        proxyFlag = "-P ${env.http_proxy}"
+    }
+
     timeout(60) {
         dir('automation/caasp-kvm') {
             ansiColor('xterm') {
-                sh(script: 'set -o pipefail; ./caasp-kvm --destroy  2>&1 | tee ${WORKSPACE}/logs/caasp-kvm-destroy.log')
+                sh(script: 'set -o pipefail; ./caasp-kvm ${proxyFlag} --destroy 2>&1 | tee ${WORKSPACE}/logs/caasp-kvm-destroy.log')
             }
         }
     }
