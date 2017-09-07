@@ -25,7 +25,7 @@ def call(Map parameters = [:]) {
 
             environment.minions.each { minion ->
                 def runTestInfraStep = {
-                    lock('venv-setup') {
+                    lock("testinfra-venv-setup") {
                         sh("set -o pipefail; tox -e ${minion.role} --notest")
                     }
 
