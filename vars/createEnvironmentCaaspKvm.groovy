@@ -20,9 +20,14 @@ Environment call(Map parameters = [:]) {
 
     Environment environment
 
+    def proxyFlag = ""
+    if (env.hasProperty("http_proxy")) {
+        proxyFlag = "-P ${env.http_proxy}"
+    }
+
     timeout(60) {
         dir('automation/caasp-kvm') {
-            sh(script: "set -o pipefail; ./caasp-kvm --build -m ${masterCount} -w ${workerCount} 2>&1 | tee ${WORKSPACE}/logs/caasp-kvm-build.log")
+            sh(script: "set -o pipefail; ./caasp-kvm ${proxyFlag} --build -m ${masterCount} -w ${workerCount} 2>&1 | tee ${WORKSPACE}/logs/caasp-kvm-build.log")
 
             // Read the generated environment file
             environment = new Environment(readJSON(file: 'environment.json'))
