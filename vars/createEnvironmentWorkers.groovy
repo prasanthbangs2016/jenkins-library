@@ -11,6 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+// Deploy worker nodes where needed
+
 import com.suse.kubic.Environment
 
 Environment call(Map parameters = [:]) {
@@ -26,6 +29,9 @@ Environment call(Map parameters = [:]) {
         case 'openstack':
             echo "Secondary worker creation step unnecessary"
             return environment
+        case 'bare-metal':
+            // return a new, up-to-date environment object
+            return createEnvironmentWorkersCaaspBareMetal()
         default:
             error("Unknown environment type: ${type}")
     }

@@ -22,6 +22,8 @@ Environment call(Map parameters = [:]) {
             return cleanupEnvironmentCaaspKvm(masterCount: masterCount, workerCount: workerCount)
         case 'openstack':
             return cleanupEnvironmentOpenstack(masterCount: masterCount, workerCount: workerCount)
+        case 'bare-metal':
+            return cleanupEnvironmentCaaspBareMetal(masterCount: masterCount, workerCount: workerCount)
         default:
             error("Unknown environment type: ${type}")
     }
