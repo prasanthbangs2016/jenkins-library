@@ -40,6 +40,11 @@ def call() {
             workerCount: 2) {
 
         // Run the Core Project Tests
-        coreKubicProjectTests(environment: environment)
+        coreKubicProjectTests(
+          environment: environment,
+          podName: 'default',
+          replicaCount: 15,
+          replicasCreationIntervalSeconds: 600
+        )
     }
 }
