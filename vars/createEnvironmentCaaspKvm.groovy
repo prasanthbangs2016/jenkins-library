@@ -27,7 +27,9 @@ Environment call(Map parameters = [:]) {
 
     timeout(60) {
         dir('automation/caasp-kvm') {
-            sh(script: "set -o pipefail; ./caasp-kvm ${proxyFlag} --build -m ${masterCount} -w ${workerCount} 2>&1 | tee ${WORKSPACE}/logs/caasp-kvm-build.log")
+            withCredentials([string(credentialsId: 'caasp-proxy-host', variable: 'CAASP_PROXY')]) {
+                sh(script: "set -o pipefail; ./caasp-kvm -P ${CAASP_PROXY} --build -m ${masterCount} -w ${workerCount} 2>&1 | tee ${WORKSPACE}/logs/caasp-kvm-build.log")
+            }
 
             // Read the generated environment file
             environment = new Environment(readJSON(file: 'environment.json'))
