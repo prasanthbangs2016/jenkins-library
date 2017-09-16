@@ -17,7 +17,8 @@ import com.suse.kubic.Environment
 Environment call(Map parameters = [:]) {
     int masterCount = parameters.get('masterCount')
     int workerCount = parameters.get('workerCount')
-    String image = parameters.get('image')
+
+    OpenstackTypeOptions options = parameters.get('typeOptions', new OpenstackTypeOptions())
 
     if (masterCount != 1) {
         error('Multiple masters are not supported on a openstack environment')
@@ -28,6 +29,8 @@ Environment call(Map parameters = [:]) {
     timeout(60) {
         dir('automation/caasp-openstack-heat') {
             String stackName = "${JOB_NAME}-${BUILD_NUMBER}".replace("/", "-")
+
+            image = options.image
 
             withCredentials([file(credentialsId: 'prvcld-openrc-caasp-ci-tests', variable: 'OPENRC')]) {
                 if (image == null || image == '') {

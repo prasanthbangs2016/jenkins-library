@@ -16,7 +16,7 @@ import com.suse.kubic.Environment
 def call(Map parameters = [:], Closure body) {
     def nodeLabel = parameters.get('nodeLabel', 'leap42.3&&m1.xxlarge')
     def environmentType = parameters.get('environmentType', 'caasp-kvm')
-    def openstackImage = parameters.get('openstackImage')
+    def environmentTypeOptions = parameters.get('environmentTypeOptions')
     def gitBase = parameters.get('gitBase')
     def gitBranch = parameters.get('gitBranch')
     def gitCredentialsId = parameters.get('gitCredentialsId')
@@ -53,9 +53,9 @@ def call(Map parameters = [:], Closure body) {
             stage('Create Environment') {
                 environment = createEnvironment(
                     type: environmentType,
+                    typeOptions: environmentTypeOptions,
                     masterCount: masterCount,
-                    workerCount: workerCount,
-                    openstackImage: openstackImage
+                    workerCount: workerCount
                 )
             }
 
@@ -69,9 +69,9 @@ def call(Map parameters = [:], Closure body) {
                 environment = createEnvironmentWorkers(
                     environment: environment,
                     type: environmentType,
+                    typeOptions: environmentTypeOptions,
                     masterCount: masterCount,
-                    workerCount: workerCount,
-                    openstackImage: openstackImage
+                    workerCount: workerCount
                 )
             }
 
@@ -102,7 +102,12 @@ def call(Map parameters = [:], Closure body) {
             // Destroy the Kubic Environment
             stage('Destroy Environment') {
                 try {
-                    cleanupEnvironment(type: environmentType, masterCount: masterCount, workerCount: workerCount)
+                    cleanupEnvironment(
+                        type: environmentType,
+                        typeOptions: environmentTypeOptions,
+                        masterCount: masterCount,
+                        workerCount: workerCount
+                    )
                 } catch (Exception exc) {
                     // TODO: Figure out if we can mark this stage as failed, while allowing the remaining stages to proceed.
                     echo "Failed to Destroy Environment"
