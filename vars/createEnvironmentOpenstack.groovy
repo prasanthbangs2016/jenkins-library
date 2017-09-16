@@ -30,14 +30,23 @@ Environment call(Map parameters = [:]) {
         dir('automation/caasp-openstack-heat') {
             String stackName = "${JOB_NAME}-${BUILD_NUMBER}".replace("/", "-")
 
-            image = options.image
+            writeFile(file: 'heat-environment.yaml', text: """
+---
+parameters:
+  admin_flavor: ${options.adminFlavor}
+  master_flavor: ${options.masterFlavor}
+  worker_flavor: ${options.workerFlavor}
+""")
 
             withCredentials([file(credentialsId: 'prvcld-openrc-caasp-ci-tests', variable: 'OPENRC')]) {
+                image = options.image
+
                 if (image == null || image == '') {
                     // Find the latest Devel image if we've not been given a specific image
                     image = sh(script: "set -o pipefail; set +x; source $OPENRC; openstack image list --property caasp-project='Devel:CASP:Head:ControllerNode' -c Name -f value | sort -r -V | head -n1 | tr -d \"\n\"", returnStdout: true)
                 }
-                sh(script: "set -o pipefail; ./caasp-openstack --openrc ${OPENRC} -b -w ${workerCount} --image ${image} --name ${stackName} 2>&1 | tee ${WORKSPACE}/logs/caasp-openstack-heat-build.log")
+
+                sh(script: "set -o pipefail; ./caasp-openstack --openrc ${OPENRC} --heat-environment heat-environment.yaml -b -w ${workerCount} --image ${image} --name ${stackName} 2>&1 | tee ${WORKSPACE}/logs/caasp-openstack-heat-build.log")
             }
 
             // Read the generated environment file
