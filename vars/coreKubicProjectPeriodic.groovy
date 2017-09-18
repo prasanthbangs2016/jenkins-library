@@ -15,6 +15,7 @@ def call(Map parameters = [:], Closure body = null) {
     String nodeLabel = parameters.get('nodeLabel', 'leap42.3&&m1.xxlarge')
     String environmentType = parameters.get('environmentType', 'caasp-kvm')
     def environmentTypeOptions = parameters.get('environmentTypeOptions')
+    boolean environmentDestroy = parameters.get('environmentDestroy', true)
     int masterCount = parameters.get('masterCount', 3)
     int workerCount = parameters.get('workerCount', 2)
 
@@ -26,6 +27,7 @@ def call(Map parameters = [:], Closure body = null) {
                 nodeLabel: nodeLabel,
                 environmentType: environmentType,
                 environmentTypeOptions: environmentTypeOptions,
+                environmentDestroy: environmentDestroy,
                 gitBase: 'https://github.com/kubic-project',
                 gitBranch: env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME),
                 gitCredentialsId: 'github-token',

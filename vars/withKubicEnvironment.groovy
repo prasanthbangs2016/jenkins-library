@@ -17,6 +17,7 @@ def call(Map parameters = [:], Closure body) {
     def nodeLabel = parameters.get('nodeLabel', 'leap42.3&&m1.xxlarge')
     def environmentType = parameters.get('environmentType', 'caasp-kvm')
     def environmentTypeOptions = parameters.get('environmentTypeOptions')
+    boolean environmentDestroy = parameters.get('environmentDestroy', true)
     def gitBase = parameters.get('gitBase')
     def gitBranch = parameters.get('gitBranch')
     def gitCredentialsId = parameters.get('gitCredentialsId')
@@ -101,17 +102,21 @@ def call(Map parameters = [:], Closure body) {
 
             // Destroy the Kubic Environment
             stage('Destroy Environment') {
-                try {
-                    cleanupEnvironment(
-                        type: environmentType,
-                        typeOptions: environmentTypeOptions,
-                        masterCount: masterCount,
-                        workerCount: workerCount
-                    )
-                } catch (Exception exc) {
-                    // TODO: Figure out if we can mark this stage as failed, while allowing the remaining stages to proceed.
-                    echo "Failed to Destroy Environment"
-                    deleteJenkinsSlave()
+                if (environmentDestroy) {
+                    try {
+                        cleanupEnvironment(
+                            type: environmentType,
+                            typeOptions: environmentTypeOptions,
+                            masterCount: masterCount,
+                            workerCount: workerCount
+                        )
+                    } catch (Exception exc) {
+                        // TODO: Figure out if we can mark this stage as failed, while allowing the remaining stages to proceed.
+                        echo "Failed to Destroy Environment"
+                        deleteJenkinsSlave()
+                    }
+                } else {
+                    echo "Skipping Destroy Environment as requested"
                 }
             }
 
