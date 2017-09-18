@@ -19,7 +19,7 @@ import com.suse.kubic.Environment
 Environment call(Map parameters = [:]) {
     Environment environment = parameters.get('environment')
     String type = parameters.get('type', 'caasp-kvm')
-    String openstackImage = parameters.get('openstackImage')
+    def typeOptions = parameters.get('typeOptions')
     int workerCount = parameters.get('workerCount')
 
     switch (type) {

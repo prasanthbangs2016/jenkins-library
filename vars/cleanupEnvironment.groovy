@@ -14,16 +14,17 @@
 
 Environment call(Map parameters = [:]) {
     String type = parameters.get('type', 'caasp-kvm')
+    def typeOptions = parameters.get('typeOptions')
     int masterCount = parameters.get('masterCount')
     int workerCount = parameters.get('workerCount')
 
     switch (type) {
         case 'caasp-kvm':
-            return cleanupEnvironmentCaaspKvm(masterCount: masterCount, workerCount: workerCount)
+            return cleanupEnvironmentCaaspKvm(masterCount: masterCount, workerCount: workerCount, typeOptions: typeOptions)
         case 'openstack':
-            return cleanupEnvironmentOpenstack(masterCount: masterCount, workerCount: workerCount)
+            return cleanupEnvironmentOpenstack(masterCount: masterCount, workerCount: workerCount, typeOptions: typeOptions)
         case 'bare-metal':
-            return cleanupEnvironmentCaaspBareMetal(masterCount: masterCount, workerCount: workerCount)
+            return cleanupEnvironmentCaaspBareMetal(masterCount: masterCount, workerCount: workerCount, typeOptions: typeOptions)
         default:
             error("Unknown environment type: ${type}")
     }

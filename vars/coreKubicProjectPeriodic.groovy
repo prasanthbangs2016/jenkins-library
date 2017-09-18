@@ -14,7 +14,7 @@
 def call(Map parameters = [:], Closure body = null) {
     String nodeLabel = parameters.get('nodeLabel', 'leap42.3&&m1.xxlarge')
     String environmentType = parameters.get('environmentType', 'caasp-kvm')
-    String openstackImage = parameters.get('openstackImage')
+    def environmentTypeOptions = parameters.get('environmentTypeOptions')
     int masterCount = parameters.get('masterCount', 3)
     int workerCount = parameters.get('workerCount', 2)
 
@@ -25,7 +25,7 @@ def call(Map parameters = [:], Closure body = null) {
         withKubicEnvironment(
                 nodeLabel: nodeLabel,
                 environmentType: environmentType,
-                openstackImage: openstackImage,
+                environmentTypeOptions: environmentTypeOptions,
                 gitBase: 'https://github.com/kubic-project',
                 gitBranch: env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME),
                 gitCredentialsId: 'github-token',
