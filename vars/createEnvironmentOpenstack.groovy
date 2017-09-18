@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import com.suse.kubic.Environment
+import com.suse.kubic.OpenstackTypeOptions
 
 
 Environment call(Map parameters = [:]) {
