@@ -34,6 +34,7 @@ Environment call(Map parameters = [:]) {
             writeFile(file: 'heat-environment.yaml', text: """
 ---
 parameters:
+  external_net: ext-net
   admin_flavor: ${options.adminFlavor}
   master_flavor: ${options.masterFlavor}
   worker_flavor: ${options.workerFlavor}
