@@ -113,7 +113,6 @@ def call(Map parameters = [:], Closure body) {
                     } catch (Exception exc) {
                         // TODO: Figure out if we can mark this stage as failed, while allowing the remaining stages to proceed.
                         echo "Failed to Destroy Environment"
-                        deleteJenkinsSlave()
                     }
                 } else {
                     echo "Skipping Destroy Environment as requested"

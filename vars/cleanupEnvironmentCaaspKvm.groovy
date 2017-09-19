@@ -12,13 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 def call(Map parameters = [:]) {
-    timeout(60) {
-        dir('automation/caasp-kvm') {
-            ansiColor('xterm') {
-                withCredentials([string(credentialsId: 'caasp-proxy-host', variable: 'CAASP_PROXY')]) {
-                    sh(script: "set -o pipefail; ./caasp-kvm -P ${CAASP_PROXY} --destroy 2>&1 | tee ${WORKSPACE}/logs/caasp-kvm-destroy.log")
+    try {
+        timeout(60) {
+            dir('automation/caasp-kvm') {
+                ansiColor('xterm') {
+                    withCredentials([string(credentialsId: 'caasp-proxy-host', variable: 'CAASP_PROXY')]) {
+                        sh(script: "set -o pipefail; ./caasp-kvm -P ${CAASP_PROXY} --destroy 2>&1 | tee ${WORKSPACE}/logs/caasp-kvm-destroy.log")
+                    }
                 }
             }
         }
+    } catch (Exception exc) {
+        // TODO: Figure out if we can mark this stage as failed, while allowing the remaining stages to proceed?
+        echo "Failed to Destroy KVM Environment, Removing this Jenkins worker"
+        deleteJenkinsSlave()
+        throw exc
     }
 }
