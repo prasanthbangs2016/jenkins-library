@@ -25,7 +25,7 @@ Environment call(Map parameters = [:]) {
         proxyFlag = "-P ${env.http_proxy}"
     }
 
-    timeout(60) {
+    timeout(120) {
         dir('automation/caasp-kvm') {
             withCredentials([string(credentialsId: 'caasp-proxy-host', variable: 'CAASP_PROXY')]) {
                 sh(script: "set -o pipefail; ./caasp-kvm -P ${CAASP_PROXY} --build -m ${masterCount} -w ${workerCount} 2>&1 | tee ${WORKSPACE}/logs/caasp-kvm-build.log")
