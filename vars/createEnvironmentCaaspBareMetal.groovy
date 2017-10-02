@@ -19,6 +19,29 @@
 import com.suse.kubic.Environment
 
 Environment call(Map parameters = [:]) {
+    boolean waitISOFetching = parameters.get('waitISOFetching', true)
+
+    timeout(10) {
+        dir('automation/caasp-bare-metal/deployer') {
+            withCredentials([file(credentialsId: 'caasp-bare-metal-serverlist', variable: 'SERVERLIST_PATH'),
+                    file(credentialsId: 'caasp-bare-metal-conf', variable: 'CONFFILE')]) {
+                // Start ISO fetching
+                sh(script: 'set -o pipefail; ./deployer ${JOB_NAME}-${BUILD_NUMBER} --start-iso-fetching 2>&1 | tee ${WORKSPACE}/logs/caasp-bare-metal-start-iso-fetching.log')
+            }
+        }
+    }
+
+    if (waitISOFetching) {
+        timeout(120) {
+            dir('automation/caasp-bare-metal/deployer') {
+                withCredentials([file(credentialsId: 'caasp-bare-metal-serverlist', variable: 'SERVERLIST_PATH'),
+                        file(credentialsId: 'caasp-bare-metal-conf', variable: 'CONFFILE')]) {
+                    // Wait for ISO fetching to complete
+                    sh(script: 'set -o pipefail; ./deployer ${JOB_NAME}-${BUILD_NUMBER} --wait-iso-fetching 2>&1 | tee ${WORKSPACE}/logs/caasp-bare-metal-wait-iso-fetching.log')
+                }
+            }
+        }
+    }
 
     timeout(60) {
         dir('automation/caasp-bare-metal/deployer') {
