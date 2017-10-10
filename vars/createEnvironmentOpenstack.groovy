@@ -19,7 +19,11 @@ Environment call(Map parameters = [:]) {
     int masterCount = parameters.get('masterCount')
     int workerCount = parameters.get('workerCount')
 
-    OpenstackTypeOptions options = parameters.get('typeOptions', new OpenstackTypeOptions())
+    OpenstackTypeOptions options = parameters.get('typeOptions', null)
+
+    if (options == null) {
+        options = new OpenstackTypeOptions()
+    }
 
     if (masterCount != 1) {
         error('Multiple masters are not supported on a openstack environment')
