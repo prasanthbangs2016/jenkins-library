@@ -14,7 +14,7 @@
 def call(Map parameters = [:], Closure body = null) {
     String nodeLabel = parameters.get('nodeLabel', 'leap42.3&&m1.xxlarge')
     String environmentType = parameters.get('environmentType', 'caasp-kvm')
-    def environmentTypeOptions = parameters.get('environmentTypeOptions')
+    def environmentTypeOptions = parameters.get('environmentTypeOptions', null)
     boolean environmentDestroy = parameters.get('environmentDestroy', true)
     int masterCount = parameters.get('masterCount', 3)
     int workerCount = parameters.get('workerCount', 2)

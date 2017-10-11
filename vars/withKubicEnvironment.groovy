@@ -16,7 +16,7 @@ import com.suse.kubic.Environment
 def call(Map parameters = [:], Closure body) {
     def nodeLabel = parameters.get('nodeLabel', 'leap42.3&&m1.xxlarge')
     def environmentType = parameters.get('environmentType', 'caasp-kvm')
-    def environmentTypeOptions = parameters.get('environmentTypeOptions')
+    def environmentTypeOptions = parameters.get('environmentTypeOptions', null)
     boolean environmentDestroy = parameters.get('environmentDestroy', true)
     def gitBase = parameters.get('gitBase')
     def gitBranch = parameters.get('gitBranch')

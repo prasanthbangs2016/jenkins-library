@@ -14,7 +14,7 @@
 
 Environment call(Map parameters = [:]) {
     String type = parameters.get('type', 'caasp-kvm')
-    def typeOptions = parameters.get('typeOptions')
+    def typeOptions = parameters.get('typeOptions', null)
     int masterCount = parameters.get('masterCount')
     int workerCount = parameters.get('workerCount')
 
