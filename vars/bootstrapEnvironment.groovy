@@ -38,7 +38,6 @@ Environment call(Map parameters = [:]) {
             echo "Fetch caasp-cli from master and set up Kubernetes login"
             sh(script: "cp ${WORKSPACE}/kubeconfig ${WORKSPACE}/logs/kubeconfig.velum_orig")
             sh(script: "mkdir -p ${WORKSPACE}/tmp")
-            sleep 300
             scpFromMinion(minion: environment.minions[0], source: "/usr/bin/caasp-cli", destination: "${WORKSPACE}/tmp/")
             sh(script: "${WORKSPACE}/tmp/caasp-cli login --kubeconfig ${WORKSPACE}/kubeconfig --server https://${environment.kubernetesHost}:6443 -p password -u test@test.com")
 
