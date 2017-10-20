@@ -30,8 +30,10 @@ OpenstackTypeOptions call(Map parameters = [:]) {
 
     // TODO: Trigger the OpenStack Image loading job, wait for it, and use the latest image..
     timeout(10) {
-        // Find the latest Devel image if we've not been given a specific image
-        options.image = sh(script: "set -o pipefail; set +x; source $OPENRC; openstack image list --property caasp-channel='${channel}' --property caasp-version='2.0' -c Name -f value | sort -r -V | head -n1 | tr -d \"\n\"", returnStdout: true)
+        withCredentials([file(credentialsId: 'prvcld-openrc-caasp-ci-tests', variable: 'OPENRC')]) {
+            // Find the latest Devel image if we've not been given a specific image
+            options.image = sh(script: "set -o pipefail; set +x; source $OPENRC; openstack image list --property caasp-channel='${channel}' --property caasp-version='2.0' -c Name -f value | sort -r -V | head -n1 | tr -d \"\n\"", returnStdout: true)
+        }
     }
 
     return options
