@@ -21,6 +21,7 @@ def call(Map parameters = [:], Closure body) {
     def gitBase = parameters.get('gitBase')
     def gitBranch = parameters.get('gitBranch')
     def gitCredentialsId = parameters.get('gitCredentialsId')
+    boolean gitIgnorePullRequest = parameters.get('gitIgnorePullRequest', false)
     int masterCount = parameters.get('masterCount')
     int workerCount = parameters.get('workerCount')
 
@@ -44,7 +45,7 @@ def call(Map parameters = [:], Closure body) {
 
         // Fetch the necessary code
         stage('Retrieve Code') {
-            cloneAllKubicRepos(gitBase: gitBase, branch: gitBranch, credentialsId: gitCredentialsId)
+            cloneAllKubicRepos(gitBase: gitBase, branch: gitBranch, credentialsId: gitCredentialsId, ignorePullRequest: gitIgnorePullRequest)
         }
 
         // Fetch the necessary images
