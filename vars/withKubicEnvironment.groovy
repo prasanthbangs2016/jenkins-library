@@ -47,6 +47,14 @@ def call(Map parameters = [:], Closure body) {
             cloneAllKubicRepos(gitBase: gitBase, branch: gitBranch, credentialsId: gitCredentialsId)
         }
 
+        // Fetch the necessary images
+        stage('Retrieve Image') {
+            environmentTypeOptions = prepareImage(
+                type: environmentType,
+                typeOptions: environmentTypeOptions
+            )
+        }
+
         Environment environment;
 
         try {

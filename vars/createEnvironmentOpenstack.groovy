@@ -45,14 +45,7 @@ parameters:
 """)
 
             withCredentials([file(credentialsId: 'prvcld-openrc-caasp-ci-tests', variable: 'OPENRC')]) {
-                image = options.image
-
-                if (image == null || image == '') {
-                    // Find the latest Devel image if we've not been given a specific image
-                    image = sh(script: "set -o pipefail; set +x; source $OPENRC; openstack image list --property caasp-channel='devel' --property caasp-version='3.0' -c Name -f value | sort -r -V | head -n1 | tr -d \"\n\"", returnStdout: true)
-                }
-
-                sh(script: "set -o pipefail; ./caasp-openstack --openrc ${OPENRC} --heat-environment heat-environment.yaml -b -w ${workerCount} --image ${image} --name ${stackName} 2>&1 | tee ${WORKSPACE}/logs/caasp-openstack-heat-build.log")
+                sh(script: "set -o pipefail; ./caasp-openstack --openrc ${OPENRC} --heat-environment heat-environment.yaml -b -w ${workerCount} --image ${options.image} --name ${stackName} 2>&1 | tee ${WORKSPACE}/logs/caasp-openstack-heat-build.log")
             }
 
             // Read the generated environment file
