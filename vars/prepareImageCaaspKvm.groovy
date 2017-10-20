@@ -11,42 +11,36 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import com.suse.kubic.Environment
 import com.suse.kubic.CaaspKvmTypeOptions
 
 
-Environment call(Map parameters = [:]) {
-    int masterCount = parameters.get('masterCount')
-    int workerCount = parameters.get('workerCount')
-
+CaaspKvmTypeOptions call(Map parameters = [:]) {
     CaaspKvmTypeOptions options = parameters.get('typeOptions', null)
 
     if (options == null) {
         options = new CaaspKvmTypeOptions()
     }
 
-    Environment environment
+    if (options.image != null && options.image != '') {
+        return options
+    }
 
     def proxyFlag = ""
     if (env.hasProperty("http_proxy")) {
         proxyFlag = "-P ${env.http_proxy}"
     }
 
+    // TODO: Channel should be a param
+    String channel = "devel"
+
     timeout(120) {
-        dir('automation/caasp-kvm') {
+        dir('automation/misc-tools') {
             withCredentials([string(credentialsId: 'caasp-proxy-host', variable: 'CAASP_PROXY')]) {
-                sh(script: "set -o pipefail; ./caasp-kvm -P ${CAASP_PROXY} --build -m ${masterCount} -w ${workerCount} --image ${options.image} --admin-ram ${options.adminRam} --admin-cpu ${options.adminCpu} --master-ram ${options.masterRam} --master-cpu ${options.masterCpu} --worker-ram ${options.workerRam} --worker-cpu ${options.workerCpu} 2>&1 | tee ${WORKSPACE}/logs/caasp-kvm-build.log")
+                sh(script: "set -o pipefail; ./download-image --type kvm channel://${channel} 2>&1 | tee ${WORKSPACE}/logs/caasp-kvm-prepare-image.log")
+                options.image = "file://${WORKSPACE}/automation/downloads/kvm-${channel}"
             }
-
-            // Read the generated environment file
-            environment = new Environment(readJSON(file: 'environment.json'))
-
-            sh(script: "cp environment.json ${WORKSPACE}/environment.json")
-            sh(script: "cat ${WORKSPACE}/environment.json")
         }
-
-        archiveArtifacts(artifacts: 'environment.json', fingerprint: true)
     }
 
-    return environment
+    return options
 }
