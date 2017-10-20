@@ -19,7 +19,6 @@
 import com.suse.kubic.Environment
 
 Environment call(Map parameters = [:]) {
-
     timeout(60) {
         dir('automation/caasp-bare-metal/deployer') {
             withCredentials([file(credentialsId: 'caasp-bare-metal-serverlist', variable: 'SERVERLIST_PATH'),
@@ -41,6 +40,5 @@ Environment call(Map parameters = [:]) {
     }
 
     // Read the generated environment file
-    Environment environment = new Environment(readJSON(file: 'environment.json'))
-    return environment
+    return new Environment(readJSON(file: 'environment.json'))
 }
