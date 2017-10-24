@@ -36,7 +36,7 @@ CaaspKvmTypeOptions call(Map parameters = [:]) {
     timeout(120) {
         dir('automation/misc-tools') {
             withCredentials([string(credentialsId: 'caasp-proxy-host', variable: 'CAASP_PROXY')]) {
-                sh(script: "set -o pipefail; ./download-image --type kvm channel://${channel} 2>&1 | tee ${WORKSPACE}/logs/caasp-kvm-prepare-image.log")
+                sh(script: "set -o pipefail; ./download-image -P ${CAASP_PROXY} --type kvm channel://${channel} 2>&1 | tee ${WORKSPACE}/logs/caasp-kvm-prepare-image.log")
                 options.image = "file://${WORKSPACE}/automation/downloads/kvm-${channel}"
             }
         }
