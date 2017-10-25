@@ -137,6 +137,10 @@ def call(Map parameters = [:], Closure body) {
                     // TODO: Figure out if we can mark this stage as failed, while allowing the remaining stages to proceed.
                     echo "Failed to Archive Logs"
                 }
+
+                echo 'Create error_state.png gallery'
+                sh(script: '''${WORKSPACE}/automation/misc-tools/create-gallery ${BUILD_NUMBER}''')
+                archiveArtifacts(artifacts: 'gallery.html', fingerprint: true)
             }
 
             // Cleanup the node
