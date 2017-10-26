@@ -32,6 +32,7 @@ def call(Map parameters = [:], Closure body) {
         // Show some info about the node were running on
         stage('Node Info') {
             echo "Node: ${env.NODE_NAME}"
+            echo "Workspace: ${env.WORKSPACE}"
             sh(script: 'ip a')
             def response = httpRequest(url: 'http://169.254.169.254/latest/meta-data/public-ipv4')
             echo "Public IPv4: ${response.content}"
@@ -135,6 +136,16 @@ def call(Map parameters = [:], Closure body) {
                 } catch (Exception exc) {
                     // TODO: Figure out if we can mark this stage as failed, while allowing the remaining stages to proceed.
                     echo "Failed to Archive Logs"
+                }
+            }
+
+            // Cleanup the node
+            stage('Cleanup') {
+                try {
+                    cleanWs()
+                } catch (Exception exc) {
+                    // TODO: Figure out if we can mark this stage as failed, while allowing the remaining stages to proceed.
+                    echo "Failed to clean workspace"
                 }
             }
         }
