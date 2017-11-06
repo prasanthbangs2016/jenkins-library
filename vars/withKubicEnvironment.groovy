@@ -137,6 +137,18 @@ def call(Map parameters = [:], Closure body) {
                     // TODO: Figure out if we can mark this stage as failed, while allowing the remaining stages to proceed.
                     echo "Failed to Archive Logs"
                 }
+                echo "Writing logs to database"
+                try {
+                  withCredentials([string(credentialsId: 'database-host', variable: 'DBHOST')]) {
+                    withCredentials([string(credentialsId: 'database-password', variable: 'DBPASS')]) {
+                      String status = currentBuild.currentResult
+                      def starttime = new Date(currentBuild.startTimeInMillis).format("yyyy-MM-dd HH:mm")
+                      sh(script: "/usr/bin/mysql -h ${DBHOST} -u jenkins -p${DBPASS} testplan -e \"INSERT INTO test_outcome (build_num, build_url, branch, status, pipeline, start_time) VALUES (\'$BUILD_NUMBER\', \'$BUILD_URL\', \'$BRANCH_NAME\', \'${status}\', \'$JOB_NAME\', \'${starttime}\') \" ")
+                    }
+                  }
+                } catch (Exception exc) {
+                    echo "Failed to write to database"
+                }
             }
 
             // Cleanup the node
