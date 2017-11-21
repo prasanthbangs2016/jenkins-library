@@ -39,9 +39,7 @@ def call() {
             masterCount: 3,
             workerCount: 2) {
 
-        stage('Run Tests') {
-            // TODO: Add some cluster tests, e.g. booting pods, checking they work, etc
-            runTestInfra(environment: environment)
-        }
+        // Run the Core Project Tests
+        coreKubicProjectTests(environment: environment)
     }
 }
