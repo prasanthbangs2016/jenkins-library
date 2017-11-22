@@ -34,10 +34,8 @@ def call(Map parameters = [:], Closure body = null) {
                 masterCount: masterCount,
                 workerCount: workerCount) {
 
-            stage('Run Basic Tests') {
-                // TODO: Add some cluster tests, e.g. booting pods, checking they work, etc
-                runTestInfra(environment: environment)
-            }
+            // Run the Core Project Tests
+            coreKubicProjectTests(environment: environment)
 
             if (body != null) {
                 // Prepare the body closure delegate
