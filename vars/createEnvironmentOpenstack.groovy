@@ -12,20 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import com.suse.kubic.Environment
+import com.suse.kubic.BuildParamaters
 import com.suse.kubic.OpenstackTypeOptions
 
 
 Environment call(Map parameters = [:]) {
-    int masterCount = parameters.get('masterCount')
-    int workerCount = parameters.get('workerCount')
-
     OpenstackTypeOptions options = parameters.get('typeOptions', null)
 
     if (options == null) {
         options = new OpenstackTypeOptions()
     }
 
-    if (masterCount != 1) {
+    if (BuildParamaters.masterCount != 1) {
         error('Multiple masters are not supported on a openstack environment')
     }
 
@@ -45,7 +43,7 @@ parameters:
 """)
 
             withCredentials([file(credentialsId: 'prvcld-openrc-caasp-ci-tests', variable: 'OPENRC')]) {
-                sh(script: "set -o pipefail; ./caasp-openstack --openrc ${OPENRC} --heat-environment heat-environment.yaml -b -w ${workerCount} --image ${options.image} --name ${stackName} 2>&1 | tee ${WORKSPACE}/logs/caasp-openstack-heat-build.log")
+                sh(script: "set -o pipefail; ./caasp-openstack --openrc ${OPENRC} --heat-environment heat-environment.yaml -b -w ${BuildParamaters.workerCount} --image ${options.image} --name ${stackName} 2>&1 | tee ${WORKSPACE}/logs/caasp-openstack-heat-build.log")
             }
 
             // Read the generated environment file

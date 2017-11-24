@@ -35,9 +35,7 @@ def call() {
             environmentType: 'caasp-kvm',
             gitBase: 'https://github.com/kubic-project',
             gitBranch: env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME),
-            gitCredentialsId: 'github-token',
-            masterCount: 3,
-            workerCount: 2) {
+            gitCredentialsId: 'github-token') {
 
         // Run the Core Project Tests
         coreKubicProjectTests(

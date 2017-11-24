@@ -16,10 +16,14 @@ def call(Map parameters = [:], Closure body = null) {
     String environmentType = parameters.get('environmentType', 'caasp-kvm')
     def environmentTypeOptions = parameters.get('environmentTypeOptions', null)
     boolean environmentDestroy = parameters.get('environmentDestroy', true)
-    int masterCount = parameters.get('masterCount', 3)
-    int workerCount = parameters.get('workerCount', 2)
+    int masterCount = parameters.get('masterCount', BuildParamaters.masterCount)
+    int workerCount = parameters.get('workerCount', BuildParamaters.workerCount)
 
     echo "Starting Kubic core project periodic"
+
+    // Setup the global BuildParamaters
+    BuildParamaters.masterCount = masterCount;
+    BuildParamaters.workerCount = workerCount;
 
     try {
         // TODO: Make this an OpenStack based deploy with 50+ nodes.
@@ -30,9 +34,7 @@ def call(Map parameters = [:], Closure body = null) {
                 environmentDestroy: environmentDestroy,
                 gitBase: 'https://github.com/kubic-project',
                 gitBranch: env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME),
-                gitCredentialsId: 'github-token',
-                masterCount: masterCount,
-                workerCount: workerCount) {
+                gitCredentialsId: 'github-token') {
 
             // Run the Core Project Tests
             coreKubicProjectTests(environment: environment)

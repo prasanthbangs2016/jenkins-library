@@ -13,14 +13,12 @@
 // limitations under the License.
 
 // Deploy worker nodes where needed
-
 import com.suse.kubic.Environment
 
 Environment call(Map parameters = [:]) {
     Environment environment = parameters.get('environment')
     String type = parameters.get('type', 'caasp-kvm')
     def typeOptions = parameters.get('typeOptions')
-    int workerCount = parameters.get('workerCount')
 
     switch (type) {
         case 'caasp-kvm':

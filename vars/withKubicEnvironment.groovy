@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import com.suse.kubic.Environment
+import com.suse.kubic.BuildParamaters
 
 def call(Map parameters = [:], Closure body) {
     def nodeLabel = parameters.get('nodeLabel', 'leap42.3&&m1.xxlarge')
@@ -22,9 +23,7 @@ def call(Map parameters = [:], Closure body) {
     def gitBranch = parameters.get('gitBranch')
     def gitCredentialsId = parameters.get('gitCredentialsId')
     boolean gitIgnorePullRequest = parameters.get('gitIgnorePullRequest', false)
-    int masterCount = parameters.get('masterCount')
-    int workerCount = parameters.get('workerCount')
-
+    
     echo "Creating Kubic Environment"
 
     // Allocate a node
@@ -64,9 +63,7 @@ def call(Map parameters = [:], Closure body) {
             stage('Create Environment') {
                 environment = createEnvironment(
                     type: environmentType,
-                    typeOptions: environmentTypeOptions,
-                    masterCount: masterCount,
-                    workerCount: workerCount
+                    typeOptions: environmentTypeOptions
                 )
             }
 
@@ -80,9 +77,7 @@ def call(Map parameters = [:], Closure body) {
                 environment = createEnvironmentWorkers(
                     environment: environment,
                     type: environmentType,
-                    typeOptions: environmentTypeOptions,
-                    masterCount: masterCount,
-                    workerCount: workerCount
+                    typeOptions: environmentTypeOptions
                 )
             }
 
@@ -117,9 +112,7 @@ def call(Map parameters = [:], Closure body) {
                     try {
                         cleanupEnvironment(
                             type: environmentType,
-                            typeOptions: environmentTypeOptions,
-                            masterCount: masterCount,
-                            workerCount: workerCount
+                            typeOptions: environmentTypeOptions
                         )
                     } catch (Exception exc) {
                         // TODO: Figure out if we can mark this stage as failed, while allowing the remaining stages to proceed.

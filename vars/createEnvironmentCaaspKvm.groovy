@@ -12,13 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import com.suse.kubic.Environment
+import com.suse.kubic.BuildParamaters
 import com.suse.kubic.CaaspKvmTypeOptions
 
 
 Environment call(Map parameters = [:]) {
-    int masterCount = parameters.get('masterCount')
-    int workerCount = parameters.get('workerCount')
-
     CaaspKvmTypeOptions options = parameters.get('typeOptions', null)
 
     if (options == null) {
@@ -35,7 +33,7 @@ Environment call(Map parameters = [:]) {
     timeout(120) {
         dir('automation/caasp-kvm') {
             withCredentials([string(credentialsId: 'caasp-proxy-host', variable: 'CAASP_PROXY')]) {
-                sh(script: "set -o pipefail; ./caasp-kvm -P ${CAASP_PROXY} --build -m ${masterCount} -w ${workerCount} --image ${options.image} --admin-ram ${options.adminRam} --admin-cpu ${options.adminCpu} --master-ram ${options.masterRam} --master-cpu ${options.masterCpu} --worker-ram ${options.workerRam} --worker-cpu ${options.workerCpu} 2>&1 | tee ${WORKSPACE}/logs/caasp-kvm-build.log")
+                sh(script: "set -o pipefail; ./caasp-kvm -P ${CAASP_PROXY} --build -m ${BuildParamaters.masterCount} -w ${BuildParamaters.workerCount} --image ${options.image} --admin-ram ${options.adminRam} --admin-cpu ${options.adminCpu} --master-ram ${options.masterRam} --master-cpu ${options.masterCpu} --worker-ram ${options.workerRam} --worker-cpu ${options.workerCpu} 2>&1 | tee ${WORKSPACE}/logs/caasp-kvm-build.log")
             }
 
             // Read the generated environment file
