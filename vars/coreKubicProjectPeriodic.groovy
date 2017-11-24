@@ -16,7 +16,7 @@ def call(Map parameters = [:], Closure body = null) {
     String environmentType = parameters.get('environmentType', 'caasp-kvm')
     def environmentTypeOptions = parameters.get('environmentTypeOptions', null)
     boolean environmentDestroy = parameters.get('environmentDestroy', true)
-    int masterCount = parameters.get('masterCount', 3)
+    int masterCount = parameters.get('masterCount', 1)
     int workerCount = parameters.get('workerCount', 2)
 
     echo "Starting Kubic core project periodic"
