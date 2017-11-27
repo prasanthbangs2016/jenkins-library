@@ -36,7 +36,7 @@ def call() {
             gitBase: 'https://github.com/kubic-project',
             gitBranch: env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME),
             gitCredentialsId: 'github-token',
-            masterCount: 1,
+            masterCount: 3,
             workerCount: 2) {
 
         // Run the Core Project Tests
