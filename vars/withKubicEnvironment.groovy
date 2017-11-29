@@ -87,6 +87,7 @@ def call(Map parameters = [:], Closure body) {
             }
 
             // Bootstrap the Kubic environment
+            // and fetch ${WORKSPACE}/kubeconfig
             stage('Bootstrap Environment') {
                 bootstrapEnvironment(environment: environment)
             }
