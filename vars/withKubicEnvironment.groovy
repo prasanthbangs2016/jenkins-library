@@ -15,7 +15,6 @@ import com.suse.kubic.Environment
 import com.suse.kubic.BuildParamaters
 
 def call(Map parameters = [:], Closure body) {
-    def nodeLabel = parameters.get('nodeLabel', 'leap42.3&&m1.xxlarge')
     def environmentType = parameters.get('environmentType', 'caasp-kvm')
     def environmentTypeOptions = parameters.get('environmentTypeOptions', null)
     boolean environmentDestroy = parameters.get('environmentDestroy', true)
@@ -25,7 +24,7 @@ def call(Map parameters = [:], Closure body) {
     echo "Creating Kubic Environment"
 
     // Allocate a node
-    node (nodeLabel) {
+    node (BuildParamaters.nodeLabel) {
         // Show some info about the node were running on
         stage('Node Info') {
             echo "Node: ${env.NODE_NAME}"

@@ -31,7 +31,6 @@ def call() {
     ])
 
     withKubicEnvironment(
-            nodeLabel: 'leap42.3&&m1.xxlarge',
             environmentType: 'caasp-kvm',
             gitBranch: env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME)) {
 

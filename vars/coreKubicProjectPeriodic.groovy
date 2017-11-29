@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 def call(Map parameters = [:], Closure body = null) {
-    String nodeLabel = parameters.get('nodeLabel', 'leap42.3&&m1.xxlarge')
     String environmentType = parameters.get('environmentType', 'caasp-kvm')
     def environmentTypeOptions = parameters.get('environmentTypeOptions', null)
     boolean environmentDestroy = parameters.get('environmentDestroy', true)
@@ -28,7 +27,6 @@ def call(Map parameters = [:], Closure body = null) {
     try {
         // TODO: Make this an OpenStack based deploy with 50+ nodes.
         withKubicEnvironment(
-                nodeLabel: nodeLabel,
                 environmentType: environmentType,
                 environmentTypeOptions: environmentTypeOptions,
                 environmentDestroy: environmentDestroy,
