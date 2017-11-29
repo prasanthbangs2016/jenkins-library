@@ -1,6 +1,10 @@
 package com.suse.kubic;
 
-// A static class holding common/global build paramaters
+// A static class holding common/global build paramaters. These paramaters
+// can be overriden by a job by simply setting the value early in the job,
+// for example:
+//
+//     BuildParamaters.workerCount = 10
 
 class BuildParamaters implements Serializable {
 	// Jenkins Settings
