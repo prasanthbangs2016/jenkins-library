@@ -19,9 +19,7 @@ def call(Map parameters = [:], Closure body) {
     def environmentType = parameters.get('environmentType', 'caasp-kvm')
     def environmentTypeOptions = parameters.get('environmentTypeOptions', null)
     boolean environmentDestroy = parameters.get('environmentDestroy', true)
-    def gitBase = parameters.get('gitBase')
     def gitBranch = parameters.get('gitBranch')
-    def gitCredentialsId = parameters.get('gitCredentialsId')
     boolean gitIgnorePullRequest = parameters.get('gitIgnorePullRequest', false)
     
     echo "Creating Kubic Environment"
@@ -45,7 +43,7 @@ def call(Map parameters = [:], Closure body) {
 
         // Fetch the necessary code
         stage('Retrieve Code') {
-            cloneAllKubicRepos(gitBase: gitBase, branch: gitBranch, credentialsId: gitCredentialsId, ignorePullRequest: gitIgnorePullRequest)
+            cloneAllKubicRepos(branch: gitBranch, ignorePullRequest: gitIgnorePullRequest)
         }
 
         // Fetch the necessary images

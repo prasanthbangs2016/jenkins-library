@@ -32,9 +32,7 @@ def call(Map parameters = [:], Closure body = null) {
                 environmentType: environmentType,
                 environmentTypeOptions: environmentTypeOptions,
                 environmentDestroy: environmentDestroy,
-                gitBase: 'https://github.com/kubic-project',
-                gitBranch: env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME),
-                gitCredentialsId: 'github-token') {
+                gitBranch: env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME)) {
 
             // Run the Core Project Tests
             coreKubicProjectTests(environment: environment)

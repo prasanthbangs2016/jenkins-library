@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // Clones a single Kubic Repo.
+import com.suse.kubic.BuildParamaters
+
 def call(Map parameters = [:]) {
-    def gitBase = parameters.get('gitBase')
     def branch = parameters.get('branch')
-    def credentialsId = parameters.get('credentialsId')
-    boolean ignorePullRequest = parameters.get('ignorePullRequest', false)
     def repo = parameters.get('repo')
+    boolean ignorePullRequest = parameters.get('ignorePullRequest', false)
 
     echo "Cloning Kubic Repo: ${repo}"
 
@@ -30,7 +30,7 @@ def call(Map parameters = [:]) {
                     $class: 'GitSCM',
                     branches: [[name: "*/${branch}"]],
                     userRemoteConfigs: [
-                        [url: "${gitBase}/${repo}.git", credentialsId: credentialsId]
+                        [url: "${BuildParamaters.gitBase}/${repo}.git", credentialsId: BuildParamaters.gitCredentialsId]
                     ],
                     extensions: [[$class: 'CleanCheckout']],
                 ])

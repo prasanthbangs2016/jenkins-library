@@ -5,4 +5,9 @@ package com.suse.kubic;
 class BuildParamaters implements Serializable {
 	static int masterCount = 3;
 	static int workerCount = 2;
+
+	static String githubOrg = 'kubic-project';
+
+	static String gitBase = 'https://github.com/kubic-project';
+	static String gitCredentialsId = 'github-token';
 }

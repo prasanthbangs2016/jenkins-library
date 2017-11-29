@@ -11,6 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+
 def call() {
     echo "Starting Kubic core project CI"
 
@@ -18,10 +20,8 @@ def call() {
         // TODO: Don't hardcode salt repo name, find the right place
         // to lookup this information dynamically.
         githubCollaboratorCheck(
-            org: 'kubic-project',
             repo: 'salt',
-            user: env.CHANGE_AUTHOR,
-            credentialsId: 'github-token')
+            user: env.CHANGE_AUTHOR)
     }
 
     // Configure the job properties
@@ -33,9 +33,7 @@ def call() {
     withKubicEnvironment(
             nodeLabel: 'leap42.3&&m1.xxlarge',
             environmentType: 'caasp-kvm',
-            gitBase: 'https://github.com/kubic-project',
-            gitBranch: env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME),
-            gitCredentialsId: 'github-token') {
+            gitBranch: env.getEnvironment().get('CHANGE_TARGET', env.BRANCH_NAME)) {
 
         // Run the Core Project Tests
         coreKubicProjectTests(

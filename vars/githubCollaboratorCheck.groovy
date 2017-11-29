@@ -11,13 +11,16 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+import com.suse.kubic.BuildParamaters
+
+
 def call(Map parameters = [:]) {
     echo "Starting GitHub Collaborator Check"
 
-    String org = parameters.get('org')
+    String org = parameters.get('org', BuildParamaters.githubOrg)
     String repo = parameters.get('repo')
     String user = parameters.get('user')
-    String credentialsId = parameters.get('credentialsId')
+    String credentialsId = parameters.get('credentialsId', BuildParamaters.gitCredentialsId)
 
     // Check if a change is from collaborator, or not.
     // Require approval for non-collaborators. As non-collaborators are

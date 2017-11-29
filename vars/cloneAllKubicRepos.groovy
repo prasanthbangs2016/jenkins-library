@@ -13,25 +13,23 @@
 // limitations under the License.
 // Clones all Kubic Repos.
 def call(Map parameters = [:]) {
-    def gitBase = parameters.get('gitBase')
     def branch = parameters.get('branch')
-    def credentialsId = parameters.get('credentialsId')
     boolean ignorePullRequest = parameters.get('ignorePullRequest', false)
 
     echo 'Cloning all Kubic Repos'
 
     timeout(5) {
         parallel 'automation': {
-            cloneKubicRepo(gitBase: gitBase, branch: branch, credentialsId: credentialsId, ignorePullRequest: ignorePullRequest, repo: "automation")
+            cloneKubicRepo(branch: branch, ignorePullRequest: ignorePullRequest, repo: "automation")
         },
         'salt': {
-            cloneKubicRepo(gitBase: gitBase, branch: branch, credentialsId: credentialsId, ignorePullRequest: ignorePullRequest, repo: "salt")
+            cloneKubicRepo(branch: branch, ignorePullRequest: ignorePullRequest, repo: "salt")
         },
         'velum': {
-            cloneKubicRepo(gitBase: gitBase, branch: branch, credentialsId: credentialsId, ignorePullRequest: ignorePullRequest, repo: "velum")
+            cloneKubicRepo(branch: branch, ignorePullRequest: ignorePullRequest, repo: "velum")
         },
         'caasp-container-manifests': {
-            cloneKubicRepo(gitBase: gitBase, branch: branch, credentialsId: credentialsId, ignorePullRequest: ignorePullRequest, repo: "caasp-container-manifests")
+            cloneKubicRepo(branch: branch, ignorePullRequest: ignorePullRequest, repo: "caasp-container-manifests")
         }
     }
 }
