@@ -35,7 +35,12 @@ def call(Map parameters = [:], Closure body = null) {
                 workerCount: workerCount) {
 
             // Run the Core Project Tests
-            coreKubicProjectTests(environment: environment)
+            coreKubicProjectTests(
+              environment: environment,
+              podName: 'default',
+              replicaCount: 15,
+              replicasCreationIntervalSeconds: 600
+            )
 
             if (body != null) {
                 // Prepare the body closure delegate
