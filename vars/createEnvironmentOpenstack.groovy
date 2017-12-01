@@ -25,10 +25,6 @@ Environment call(Map parameters = [:]) {
         options = new OpenstackTypeOptions()
     }
 
-    if (masterCount != 1) {
-        error('Multiple masters are not supported on a openstack environment')
-    }
-
     Environment environment
 
     timeout(60) {
