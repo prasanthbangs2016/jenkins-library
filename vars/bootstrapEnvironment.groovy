@@ -31,7 +31,7 @@ Environment call(Map parameters = [:]) {
                 withEnv([
                     "ENVIRONMENT=${WORKSPACE}/environment.json",
                 ]) {
-                    sh(script: "./velum-interactions --bootstrap")
+                    sh(script: "./velum-interactions --bootstrap --download-kubeconfig")
                     sh(script: "cp kubeconfig ${WORKSPACE}/kubeconfig")
                 }
             }
