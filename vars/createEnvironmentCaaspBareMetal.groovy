@@ -19,12 +19,14 @@
 import com.suse.kubic.Environment
 
 Environment call(Map parameters = [:]) {
+    int masterCount = parameters.get('masterCount')
+    int workerCount = parameters.get('workerCount')
     timeout(60) {
         dir('automation/caasp-bare-metal/deployer') {
             withCredentials([file(credentialsId: 'caasp-bare-metal-serverlist', variable: 'SERVERLIST_PATH'),
                     file(credentialsId: 'caasp-bare-metal-conf', variable: 'CONFFILE')]) {
-                // Deploy admin node
-                sh(script: 'set -o pipefail; ./deployer ${JOB_NAME}-${BUILD_NUMBER} --admin 2>&1 | tee ${WORKSPACE}/logs/caasp-bare-metal-deploy-admin.log')
+                // Lock required nodes, power them off, deploy admin node
+                sh(script: "set -o pipefail; ./deployer ${JOB_NAME}-${BUILD_NUMBER} --admin --master-count ${masterCount} --worker-count ${workerCount} 2>&1 | tee ${WORKSPACE}/logs/caasp-bare-metal-deploy-admin.log")
             }
 
             sh(script: "cp environment.json ${WORKSPACE}/environment.json")
