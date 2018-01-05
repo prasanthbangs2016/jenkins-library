@@ -17,7 +17,9 @@ def call(Map parameters = [:]) {
             String stackName = "${JOB_NAME}-${BUILD_NUMBER}".replace("/", "-")
 
             withCredentials([file(credentialsId: 'prvcld-openrc-caasp-ci-tests', variable: 'OPENRC')]) {
-                sh(script: "set -o pipefail; ./caasp-openstack --openrc ${OPENRC} --name ${stackName} -d 2>&1 | tee ${WORKSPACE}/logs/caasp-openstack-heat-destroy.log")
+                retry(10) {
+                    sh(script: "set -o pipefail; ./caasp-openstack --openrc ${OPENRC} --name ${stackName} -d 2>&1 | tee ${WORKSPACE}/logs/caasp-openstack-heat-destroy.log")
+                }
             }
         }
     }
