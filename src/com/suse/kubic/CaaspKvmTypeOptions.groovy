@@ -2,6 +2,7 @@ package com.suse.kubic;
 
 class CaaspKvmTypeOptions implements Serializable {
 	String image = null;
+	String channel = 'devel';
 
 	int adminRam = 4096;
 	int adminCpu = 4;
