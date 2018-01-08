@@ -30,14 +30,11 @@ CaaspKvmTypeOptions call(Map parameters = [:]) {
         proxyFlag = "-P ${env.http_proxy}"
     }
 
-    // TODO: Channel should be a param
-    String channel = "devel"
-
     timeout(120) {
         dir('automation/misc-tools') {
             withCredentials([string(credentialsId: 'caasp-proxy-host', variable: 'CAASP_PROXY')]) {
-                sh(script: "set -o pipefail; ./download-image --proxy ${CAASP_PROXY} --type kvm channel://${channel} 2>&1 | tee ${WORKSPACE}/logs/caasp-kvm-prepare-image.log")
-                options.image = "file://${WORKSPACE}/automation/downloads/kvm-${channel}"
+                sh(script: "set -o pipefail; ./download-image --proxy ${CAASP_PROXY} --type kvm channel://${options.channel} 2>&1 | tee ${WORKSPACE}/logs/caasp-kvm-prepare-image.log")
+                options.image = "file://${WORKSPACE}/automation/downloads/kvm-${options.channel}"
             }
         }
     }
