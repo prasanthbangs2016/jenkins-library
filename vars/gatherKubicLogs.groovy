@@ -39,4 +39,12 @@ def call(Map parameters = [:]) {
     timeout(30) {
         parallel(parallelSteps)
     }
+
+    // Extract failed Salt events from supportconfig tarballs, if any
+    timeout(10) {
+      sh(script: "mkdir ${WORKSPACE}/logs/supportconfig_salt_events/")
+      dir("${WORKSPACE}/logs/supportconfig_salt_events/") {
+        sh(script: "find ${WORKSPACE}/logs/ -name 'nts_*.tbz' -exec ${WORKSPACE}/automation/misc-tools/supportutils-parser -w -i {} \\;")
+      }
+    }
 }
