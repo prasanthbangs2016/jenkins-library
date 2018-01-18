@@ -14,7 +14,7 @@
 import com.suse.kubic.Environment
 
 def call(Map parameters = [:], Closure body) {
-    def nodeLabel = parameters.get('nodeLabel', 'leap42.3&&m1.xxlarge')
+    def nodeLabel = parameters.get('nodeLabel', 'leap42.3&&((prvcld&&m1.xxlarge)||(ecp&&m8.xlarge))')
     def environmentType = parameters.get('environmentType', 'caasp-kvm')
     def environmentTypeOptions = parameters.get('environmentTypeOptions', null)
     boolean environmentDestroy = parameters.get('environmentDestroy', true)
